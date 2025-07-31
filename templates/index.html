@@ -2,248 +2,112 @@
 
 {% block content %}
 <!-- Hero Section -->
-<section class="hero-section">
-    <div class="container">
-        <div class="row align-items-center min-vh-50">
-            <div class="col-lg-6">
-                <h1 class="display-4 fw-bold mb-4">
-                    Find Your Perfect <span class="text-warning">Venue</span>
-                </h1>
-                <p class="lead mb-4 opacity-90">
-                    Book amazing venues for your events with ease and confidence. 
-                    From intimate gatherings to grand celebrations, we have the perfect space for you.
-                </p>
-                
-                <!-- Quick Search Form -->
-                <div class="card bg-white/10 backdrop-blur border-0 mb-4" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);">
-                    <div class="card-body p-4">
+<div class="relative bg-slate-900 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="relative z-10 py-24 md:py-32 lg:py-40">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <!-- Text Content -->
+                <div>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white">
+                        The ideal space for your <span class="text-indigo-400">next event</span>.
+                    </h1>
+                    <p class="mt-6 text-lg text-slate-300 max-w-xl">
+                        From corporate meetings to personal celebrations, find and book unique venues with confidence.
+                    </p>
+                    
+                    <!-- Search Form -->
+                    <div class="mt-10 bg-slate-800/50 p-6 rounded-2xl shadow-lg border border-slate-700">
                         <form action="{{ url_for('main.view_venues') }}" method="GET">
-                            <div class="row g-3">
-                                <div class="col-md-8">
-                                    <label for="searchDate" class="form-label text-white fw-semibold">
-                                        <i class="fas fa-calendar me-2"></i>Select Your Event Date
-                                    </label>
-                                    <input type="date" name="date" id="searchDate" class="form-control form-control-lg" required>
+                            <div class="grid sm:grid-cols-3 gap-4 items-end">
+                                <div class="sm:col-span-2">
+                                    <label for="searchDate" class="block text-sm font-medium text-slate-200 mb-2">Select your event date</label>
+                                    <input type="date" name="date" id="searchDate" class="w-full bg-slate-700 border-slate-600 text-white rounded-md py-3 px-4 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required>
                                 </div>
-                                <div class="col-md-4 d-flex align-items-end">
-                                    <button type="submit" class="btn btn-warning btn-lg w-100">
-                                        <i class="fas fa-search me-2"></i>Find Venues
+                                <div class="sm:col-span-1">
+                                    <button type="submit" class="w-full flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-md transition-colors shadow-md">
+                                        Find Venues
                                     </button>
                                 </div>
                             </div>
                         </form>
                     </div>
                 </div>
-                
-                <!-- Quick Stats -->
-                <div class="row g-3 text-center">
-                    <div class="col-4">
-                        <div class="text-white">
-                            <h3 class="fw-bold mb-1">50+</h3>
-                            <small class="opacity-75">Venues</small>
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="text-white">
-                            <h3 class="fw-bold mb-1">500+</h3>
-                            <small class="opacity-75">Events</small>
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="text-white">
-                            <h3 class="fw-bold mb-1">24/7</h3>
-                            <small class="opacity-75">Support</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-lg-6 text-center d-none d-lg-block">
-                <div class="position-relative">
-                    <i class="fas fa-building fa-10x text-white opacity-25"></i>
-                    <div class="position-absolute top-50 start-50 translate-middle">
-                        <div class="bg-white rounded-circle p-4 shadow-lg">
-                            <i class="fas fa-calendar-check fa-3x text-primary"></i>
-                        </div>
+
+                <!-- Image / Graphic -->
+                <div class="hidden lg:flex items-center justify-center">
+                    <div class="relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-72 h-72 text-slate-700 opacity-60">
+                            <path d="M12.378 1.602a.75.75 0 00-.756 0L3 7.252v13.5a.75.75 0 00.75.75h16.5a.75.75 0 00.75-.75V7.252L12.378 1.602zM12 15a.75.75 0 01.75.75v3a.75.75 0 01-1.5 0v-3A.75.75 0 0112 15zM12 6.75a.75.75 0 01.75.75v5.25a.75.75 0 01-1.5 0V7.5a.75.75 0 01.75-.75z" />
+                        </svg>
+                        <div class="absolute -top-8 -right-8 bg-indigo-500/20 rounded-full w-40 h-40"></div>
+                        <div class="absolute -bottom-8 -left-8 bg-slate-700/30 rounded-full w-56 h-56"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <!-- Decorative Wave -->
-    <div class="wave-bottom">
-        <svg viewBox="0 0 1200 120" preserveAspectRatio="none" style="height: 60px; width: 100%;">
-            <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" fill="currentColor"></path>
-            <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" fill="currentColor"></path>
-            <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" fill="currentColor"></path>
-        </svg>
-    </div>
-</section>
+</div>
+
 
 <!-- Features Section -->
-<section class="py-5">
-    <div class="container">
-        <div class="row text-center mb-5">
-            <div class="col-12">
-                <h2 class="fw-bold mb-3">Why Choose Our Platform?</h2>
-                <p class="lead text-muted">Experience the easiest way to book your perfect venue</p>
-            </div>
+<section class="bg-white py-20 sm:py-28">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+            <h2 class="text-3xl font-extrabold text-slate-900 sm:text-4xl">A simpler way to plan events</h2>
+            <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">
+                Everything you need, from discovery to booking, in one place.
+            </p>
         </div>
         
-        <div class="row g-4">
-            <div class="col-lg-4 col-md-6">
-                <div class="card h-100 text-center border-0 shadow-sm">
-                    <div class="card-body p-4">
-                        <div class="feature-icon mb-4">
-                            <div class="bg-primary bg-gradient rounded-circle mx-auto d-flex align-items-center justify-content-center" 
-                                 style="width: 80px; height: 80px;">
-                                <i class="fas fa-calendar-alt fa-2x text-white"></i>
-                            </div>
-                        </div>
-                        <h4 class="fw-bold mb-3">Easy Booking</h4>
-                        <p class="text-muted mb-4">
-                            Select your date and browse available venues in just a few clicks. 
-                            Our streamlined process makes booking effortless and intuitive.
-                        </p>
-                        <div class="d-flex justify-content-center">
-                            <span class="badge bg-primary bg-gradient px-3 py-2">3 Simple Steps</span>
-                        </div>
-                    </div>
+        <div class="mt-16 grid gap-10 md:grid-cols-2 lg:grid-cols-3">
+            <!-- Feature 1 -->
+            <div class="p-8 bg-slate-50 rounded-2xl transition hover:shadow-xl hover:-translate-y-1">
+                <div class="flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 text-indigo-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
                 </div>
+                <h3 class="mt-6 text-lg font-bold text-slate-900">Effortless Search</h3>
+                <p class="mt-2 text-base text-slate-600">
+                    Quickly filter through our curated list of venues by date, capacity, and amenities to find your perfect match.
+                </p>
             </div>
             
-            <div class="col-lg-4 col-md-6">
-                <div class="card h-100 text-center border-0 shadow-sm">
-                    <div class="card-body p-4">
-                        <div class="feature-icon mb-4">
-                            <div class="bg-success bg-gradient rounded-circle mx-auto d-flex align-items-center justify-content-center" 
-                                 style="width: 80px; height: 80px;">
-                                <i class="fas fa-envelope fa-2x text-white"></i>
-                            </div>
-                        </div>
-                        <h4 class="fw-bold mb-3">Instant Notifications</h4>
-                        <p class="text-muted mb-4">
-                            Get real-time email updates on your booking status and instant confirmations 
-                            for approved requests. Stay informed every step of the way.
-                        </p>
-                        <div class="d-flex justify-content-center">
-                            <span class="badge bg-success bg-gradient px-3 py-2">Real-time Updates</span>
-                        </div>
-                    </div>
+            <!-- Feature 2 -->
+            <div class="p-8 bg-slate-50 rounded-2xl transition hover:shadow-xl hover:-translate-y-1">
+                 <div class="flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 text-indigo-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 </div>
+                <h3 class="mt-6 text-lg font-bold text-slate-900">Instant Confirmation</h3>
+                <p class="mt-2 text-base text-slate-600">
+                    Receive real-time email notifications and instant confirmation once your booking request is approved. No waiting games.
+                </p>
             </div>
-            
-            <div class="col-lg-4 col-md-6">
-                <div class="card h-100 text-center border-0 shadow-sm">
-                    <div class="card-body p-4">
-                        <div class="feature-icon mb-4">
-                            <div class="bg-warning bg-gradient rounded-circle mx-auto d-flex align-items-center justify-content-center" 
-                                 style="width: 80px; height: 80px;">
-                                <i class="fab fa-google fa-2x text-white"></i>
-                            </div>
-                        </div>
-                        <h4 class="fw-bold mb-3">Calendar Integration</h4>
-                        <p class="text-muted mb-4">
-                            Automatically add approved bookings to your Google Calendar with all event details included. 
-                            Never miss an important event again.
-                        </p>
-                        <div class="d-flex justify-content-center">
-                            <span class="badge bg-warning bg-gradient px-3 py-2">Smart Integration</span>
-                        </div>
-                    </div>
+
+            <!-- Feature 3 -->
+            <div class="p-8 bg-slate-50 rounded-2xl transition hover:shadow-xl hover:-translate-y-1">
+                 <div class="flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 text-indigo-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0H21" /></svg>
                 </div>
+                <h3 class="mt-6 text-lg font-bold text-slate-900">Seamless Scheduling</h3>
+                <p class="mt-2 text-base text-slate-600">
+                    Approved bookings are automatically added to your Google Calendar, complete with all the event details you need.
+                </p>
             </div>
         </div>
     </div>
 </section>
 
 <!-- CTA Section -->
-<section class="py-5 bg-light">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-8">
-                <h3 class="fw-bold mb-2">Ready to Book Your Perfect Venue?</h3>
-                <p class="text-muted mb-0">Join thousands of satisfied customers who trust us with their events.</p>
-            </div>
-            <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                <a href="{{ url_for('main.view_venues') }}" class="btn btn-primary btn-lg">
-                    <i class="fas fa-rocket me-2"></i>Get Started
-                </a>
-            </div>
-        </div>
+<section class="bg-slate-100">
+    <div class="max-w-4xl mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-extrabold text-slate-900 sm:text-4xl">
+            <span class="block">Ready to find your venue?</span>
+        </h2>
+        <p class="mt-4 text-lg leading-6 text-slate-600">
+            Join hundreds of planners who trust EventSpaces for their most important occasions.
+        </p>
+        <a href="{{ url_for('main.view_venues') }}" class="mt-8 w-full inline-flex items-center justify-center px-8 py-4 border border-transparent text-base font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 md:w-auto transition-transform hover:scale-105">
+            Get started
+        </a>
     </div>
 </section>
-
-{% block extra_css %}
-<style>
-    .hero-section {
-        background: var(--primary-gradient);
-        color: white;
-        position: relative;
-        overflow: hidden;
-        min-height: 70vh;
-        display: flex;
-        align-items: center;
-    }
-
-    .hero-section::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-        opacity: 0.1;
-    }
-
-    .hero-section .container {
-        position: relative;
-        z-index: 1;
-    }
-
-    .wave-bottom {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        overflow: hidden;
-        line-height: 0;
-        transform: rotate(180deg);
-    }
-
-    .wave-bottom svg {
-        position: relative;
-        display: block;
-        width: calc(100% + 1.3px);
-        height: 60px;
-        fill: #f8f9fa;
-    }
-
-    .feature-icon {
-        transition: var(--transition);
-    }
-
-    .card:hover .feature-icon {
-        transform: scale(1.1) rotate(5deg);
-    }
-
-    /* Mobile optimizations */
-    @media (max-width: 768px) {
-        .hero-section {
-            min-height: 60vh;
-            padding: 2rem 0;
-        }
-        
-        .display-4 {
-            font-size: 2rem;
-        }
-        
-        .wave-bottom svg {
-            height: 40px;
-        }
-    }
-</style>
-{% endblock %}
 {% endblock %}

@@ -28,6 +28,17 @@ class Venue(db.Model):
     def __repr__(self):
         return f"<Venue {self.name}>"
 
+    def to_dict(self):
+        """Converts the Venue object to a dictionary."""
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "capacity": self.capacity,
+            "location": self.location,
+            "amenities": self.amenities,
+        }
+
 
 class BookingRequest(db.Model):
     id = db.Column(db.Integer, primary_key=True)

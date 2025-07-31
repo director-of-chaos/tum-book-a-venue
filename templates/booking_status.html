@@ -1,375 +1,153 @@
 {% extends "base.html" %}
 
-{% block title %}Booking Status{% endblock %}
+{% block title %}Booking Status - {{ booking.reference_number }}{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8 col-xl-7">
-            <!-- Status Header -->
-            <div class="status-card status-{{ booking.status }} mb-4">
-                <div class="text-center mb-4">
-                    {% if booking.status == 'pending' %}
-                        <div class="status-icon mb-4">
-                            <i class="fas fa-clock fa-4x text-warning pulse"></i>
-                        </div>
-                        <h2 class="fw-bold mb-3">Booking Under Review</h2>
-                        <p class="lead mb-0">Your booking request is being carefully reviewed by our admin team.</p>
-                        <small class="text-muted">We'll notify you via email once we have an update.</small>
-                    {% elif booking.status == 'approved' %}
-                        <div class="status-icon mb-4">
-                            <i class="fas fa-check-circle fa-4x text-success bounce"></i>
-                        </div>
-                        <h2 class="fw-bold mb-3 text-success">Booking Confirmed!</h2>
-                        <p class="lead mb-0">Congratulations! Your venue booking has been approved.</p>
-                        <small class="text-muted">Get ready for an amazing event!</small>
-                    {% else %}
-                        <div class="status-icon mb-4">
-                            <i class="fas fa-times-circle fa-4x text-danger shake"></i>
-                        </div>
-                        <h2 class="fw-bold mb-3 text-danger">Booking Not Approved</h2>
-                        <p class="lead mb-0">Unfortunately, your booking request was not approved.</p>
-                        <small class="text-muted">Please see the details below and consider alternative options.</small>
-                    {% endif %}
+<div class="bg-slate-50 py-12 sm:py-16">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+
+        <!-- Status Header Card -->
+        {% set status_styles = {
+            'pending':  {'border': 'border-yellow-400', 'bg': 'bg-yellow-100', 'text': 'text-yellow-800', 'icon_bg': 'bg-yellow-200', 'icon_text': 'text-yellow-600'},
+            'approved': {'border': 'border-green-400',   'bg': 'bg-green-100',   'text': 'text-green-800',   'icon_bg': 'bg-green-200',   'icon_text': 'text-green-600'},
+            'rejected': {'border': 'border-red-400',     'bg': 'bg-red-100',     'text': 'text-red-800',     'icon_bg': 'bg-red-200',     'icon_text': 'text-red-600'}
+        } %}
+        {% set current_style = status_styles[booking.status] %}
+
+        <div class="bg-white shadow-lg rounded-2xl border-t-4 {{ current_style.border }}">
+            <div class="p-6 sm:p-8">
+                <div class="flex items-start sm:items-center gap-4 sm:gap-6">
+                    <div class="flex-shrink-0 h-16 w-16 rounded-full {{ current_style.icon_bg }} flex items-center justify-center">
+                        {% if booking.status == 'pending' %}
+                            <svg class="h-8 w-8 {{ current_style.icon_text }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        {% elif booking.status == 'approved' %}
+                            <svg class="h-8 w-8 {{ current_style.icon_text }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        {% else %}
+                             <svg class="h-8 w-8 {{ current_style.icon_text }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        {% endif %}
+                    </div>
+                    <div>
+                        {% if booking.status == 'pending' %}
+                            <h2 class="text-2xl font-bold text-slate-900">Booking Under Review</h2>
+                            <p class="mt-1 text-slate-600">Your request is being reviewed. We'll notify you via email with an update.</p>
+                        {% elif booking.status == 'approved' %}
+                            <h2 class="text-2xl font-bold text-slate-900">Booking Confirmed!</h2>
+                            <p class="mt-1 text-slate-600">Congratulations! Your venue is reserved. Get ready for an amazing event.</p>
+                        {% else %}
+                            <h2 class="text-2xl font-bold text-slate-900">Booking Not Approved</h2>
+                            <p class="mt-1 text-slate-600">Unfortunately, this request could not be approved. See the admin response below.</p>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Booking Details Card -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-white border-0 py-4">
-                    <h5 class="mb-0 fw-bold">
-                        <i class="fas fa-info-circle text-primary me-2"></i>Booking Details
-                    </h5>
-                </div>
-                <div class="card-body p-4">
-                    <div class="row g-4">
-                        <div class="col-md-6">
-                            <div class="detail-item">
-                                <label class="detail-label">Reference Number</label>
-                                <div class="detail-value">
-                                    <span class="badge bg-primary bg-gradient px-3 py-2 fs-6">
-                                        {{ booking.reference_number or booking.booking_id }}
-                                    </span>
-                                </div>
-                            </div>
-                            
-                            <div class="detail-item">
-                                <label class="detail-label">Event Title</label>
-                                <div class="detail-value fw-semibold">{{ booking.event_title }}</div>
-                            </div>
-                            
-                            <div class="detail-item">
-                                <label class="detail-label">Venue</label>
-                                <div class="detail-value">
-                                    <i class="fas fa-building text-primary me-2"></i>
-                                    {{ booking.venue.name }}
-                                </div>
-                            </div>
-                            
-                            <div class="detail-item">
-                                <label class="detail-label">Date</label>
-                                <div class="detail-value">
-                                    <i class="fas fa-calendar text-success me-2"></i>
-                                    {{ booking.event_date.strftime('%A, %B %d, %Y') }}
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <div class="detail-item">
-                                <label class="detail-label">Time</label>
-                                <div class="detail-value">
-                                    <i class="fas fa-clock text-info me-2"></i>
-                                    {{ booking.start_time }} - {{ booking.end_time }}
-                                </div>
-                            </div>
-                            
-                            <div class="detail-item">
-                                <label class="detail-label">Status</label>
-                                <div class="detail-value">
-                                    <span class="badge bg-{{ 'warning' if booking.status == 'pending' else ('success' if booking.status == 'approved' else 'danger') }} bg-gradient px-3 py-2">
-                                        <i class="fas fa-{{ 'clock' if booking.status == 'pending' else ('check' if booking.status == 'approved' else 'times') }} me-1"></i>
-                                        {{ booking.status.title() }}
-                                    </span>
-                                </div>
-                            </div>
-                            
-                            <div class="detail-item">
-                                <label class="detail-label">Submitted</label>
-                                <div class="detail-value text-muted">
-                                    {{ booking.created_at.strftime('%B %d, %Y at %I:%M %p') }}
-                                </div>
-                            </div>
-                            
-                            {% if booking.processed_at %}
-                            <div class="detail-item">
-                                <label class="detail-label">Processed</label>
-                                <div class="detail-value text-muted">
-                                    {{ booking.processed_at.strftime('%B %d, %Y at %I:%M %p') }}
-                                </div>
-                            </div>
-                            {% endif %}
-                        </div>
+        <!-- Booking Details Card -->
+        <div class="bg-white shadow-lg rounded-2xl">
+            <div class="px-6 py-4 border-b border-slate-200">
+                <h3 class="text-lg font-semibold leading-6 text-slate-900">Booking Details</h3>
+            </div>
+            <div class="p-6 sm:p-8">
+                <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-8">
+                    <div>
+                        <dt class="text-sm font-medium text-slate-500">Reference Number</dt>
+                        <dd class="mt-1 text-slate-900 font-semibold text-lg">{{ booking.reference_number }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-slate-500">Status</dt>
+                        <dd class="mt-1"><span class="inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold {{ current_style.bg }} {{ current_style.text }}">{{ booking.status|title }}</span></dd>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <dt class="text-sm font-medium text-slate-500">Event Title</dt>
+                        <dd class="mt-1 text-slate-900 font-semibold">{{ booking.event_title }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-slate-500">Venue</dt>
+                        <dd class="mt-1 text-slate-900">{{ booking.venue.name }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-slate-500">Date & Time</dt>
+                        <dd class="mt-1 text-slate-900">{{ booking.event_date.strftime('%B %d, %Y') }} from {{ booking.start_time }} to {{ booking.end_time }}</dd>
                     </div>
                     
                     {% if booking.event_description %}
-                    <hr class="my-4">
-                    <div class="detail-item">
-                        <label class="detail-label">Event Description</label>
-                        <div class="detail-value">
-                            <div class="p-3 bg-light rounded">
-                                {{ booking.event_description }}
-                            </div>
-                        </div>
+                    <div class="sm:col-span-2">
+                        <dt class="text-sm font-medium text-slate-500">Event Description</dt>
+                        <dd class="mt-2 text-slate-700 bg-slate-50 p-4 rounded-md border border-slate-200">{{ booking.event_description }}</dd>
                     </div>
                     {% endif %}
 
                     {% if booking.admin_response %}
-                    <hr class="my-4">
-                    <div class="alert alert-{{ 'success' if booking.status == 'approved' else 'danger' }} border-0">
-                        <div class="d-flex align-items-start">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-user-tie fa-lg"></i>
-                            </div>
-                            <div class="flex-grow-1 ms-3">
-                                <h6 class="alert-heading mb-2">Admin Response</h6>
-                                <p class="mb-0">{{ booking.admin_response }}</p>
-                            </div>
-                        </div>
+                    <div class="sm:col-span-2">
+                        <dt class="text-sm font-medium text-slate-500">Admin Response</dt>
+                        <dd class="mt-2 text-slate-800 {{ current_style.bg }} p-4 rounded-md border {{ current_style.border }}">{{ booking.admin_response }}</dd>
                     </div>
                     {% endif %}
-                </div>
+                </dl>
             </div>
+        </div>
 
-            <!-- Action Buttons -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-body p-4 text-center">
-                    {% if booking.status == 'approved' %}
-                        <h6 class="fw-bold mb-4">What's Next?</h6>
-                        <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
-                            <a href="{{ url_for('main.add_to_calendar', booking_id=booking.booking_id) }}" 
-                               class="btn btn-warning btn-lg">
-                                <i class="fab fa-google me-2"></i>Add to Google Calendar
-                            </a>
-                            <button class="btn btn-outline-primary btn-lg" onclick="shareBooking()">
-                                <i class="fas fa-share-alt me-2"></i>Share Event
-                            </button>
-                            <button class="btn btn-outline-success btn-lg" onclick="downloadBooking()">
-                                <i class="fas fa-download me-2"></i>Download Details
-                            </button>
-                        </div>
-                        
-                        <hr class="my-4">
-                        
-                        <div class="alert alert-info border-0 mb-0">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-lightbulb fa-lg text-info me-3"></i>
-                                <div class="text-start">
-                                    <strong>Preparation Tips:</strong><br>
-                                    <small>Arrive 30 minutes early for setup. Contact us if you need any additional equipment or have special requirements.</small>
-                                </div>
-                            </div>
-                        </div>
-                    {% elif booking.status == 'pending' %}
-                        <h6 class="fw-bold mb-4">While You Wait</h6>
-                        <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
-                            <a href="{{ url_for('main.view_venues') }}" class="btn btn-outline-primary">
-                                <i class="fas fa-building me-2"></i>Browse Other Venues
-                            </a>
-                            <button class="btn btn-outline-info" onclick="checkStatus()">
-                                <i class="fas fa-refresh me-2"></i>Refresh Status
-                            </button>
-                        </div>
-                        
-                        <div class="mt-4">
-                            <small class="text-muted">
-                                <i class="fas fa-clock me-1"></i>
-                                Typical review time: 24-48 hours
-                            </small>
-                        </div>
-                    {% else %}
-                        <h6 class="fw-bold mb-4">Alternative Options</h6>
-                        <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
-                            <a href="{{ url_for('main.book_venue') }}" class="btn btn-primary btn-lg">
-                                <i class="fas fa-plus me-2"></i>Submit New Request
-                            </a>
-                            <a href="{{ url_for('main.view_venues') }}" class="btn btn-outline-primary">
-                                <i class="fas fa-search me-2"></i>Find Alternative Venues
-                            </a>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- Help Section -->
-            <div class="text-center mt-4">
-                <p class="text-muted mb-3">Need assistance or have questions?</p>
-                <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center">
-                    <a href="tel:+1234567890" class="btn btn-outline-secondary">
-                        <i class="fas fa-phone me-2"></i>Call Support
+        <!-- Actions & Help Section -->
+        <div class="bg-white shadow-lg rounded-2xl p-6 sm:p-8 text-center">
+            {% if booking.status == 'approved' %}
+                <h3 class="text-lg font-semibold text-slate-900">What's Next?</h3>
+                <div class="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+                    <a href="{{ url_for('main.add_to_calendar', booking_id=booking.booking_id) }}" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
+                        Add to Google Calendar
                     </a>
-                    <a href="mailto:support@venuebooking.com" class="btn btn-outline-secondary">
-                        <i class="fas fa-envelope me-2"></i>Email Us
+                    <button onclick="downloadBooking()" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50">
+                        Download Details
+                    </button>
+                </div>
+            {% elif booking.status == 'pending' %}
+                <h3 class="text-lg font-semibold text-slate-900">Need to make a change?</h3>
+                <p class="mt-2 text-sm text-slate-600">Please contact support to modify or cancel your pending request.</p>
+                <div class="mt-6">
+                    <button onclick="checkStatus()" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
+                        Refresh Status
+                    </button>
+                </div>
+            {% else %}
+                 <h3 class="text-lg font-semibold text-slate-900">What now?</h3>
+                <p class="mt-2 text-sm text-slate-600">Don't worry, there are other options available.</p>
+                <div class="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+                    <a href="{{ url_for('main.view_venues') }}" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50">
+                        Find Other Venues
+                    </a>
+                    <a href="{{ url_for('main.book_venue') }}" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
+                        Submit a New Request
                     </a>
                 </div>
-            </div>
+            {% endif %}
         </div>
     </div>
 </div>
 {% endblock %}
 
-{% block extra_css %}
-<style>
-    .status-card {
-        background: white;
-        border-radius: var(--border-radius);
-        padding: 3rem 2rem;
-        box-shadow: var(--card-shadow);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .status-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 5px;
-    }
-
-    .status-pending::before {
-        background: var(--warning-gradient);
-    }
-
-    .status-approved::before {
-        background: var(--success-gradient);
-    }
-
-    .status-rejected::before {
-        background: var(--danger-gradient);
-    }
-
-    .detail-item {
-        margin-bottom: 1.5rem;
-    }
-
-    .detail-label {
-        display: block;
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: #6c757d;
-        margin-bottom: 0.5rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .detail-value {
-        font-size: 1rem;
-        color: #333;
-        line-height: 1.5;
-    }
-
-    .status-icon {
-        animation-duration: 2s;
-        animation-iteration-count: infinite;
-    }
-
-    .pulse {
-        animation-name: pulse;
-    }
-
-    .bounce {
-        animation-name: bounce;
-        animation-duration: 1s;
-        animation-iteration-count: 2;
-    }
-
-    .shake {
-        animation-name: shake;
-        animation-duration: 0.5s;
-        animation-iteration-count: 1;
-    }
-
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.1); }
-    }
-
-    @keyframes bounce {
-        0%, 20%, 53%, 80%, 100% { transform: translateY(0); }
-        40%, 43% { transform: translateY(-10px); }
-        70% { transform: translateY(-5px); }
-        90% { transform: translateY(-2px); }
-    }
-
-    @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-        20%, 40%, 60%, 80% { transform: translateX(5px); }
-    }
-
-    /* Mobile optimizations */
-    @media (max-width: 768px) {
-        .status-card {
-            padding: 2rem 1rem;
-        }
-        
-        .detail-item {
-            margin-bottom: 1rem;
-        }
-        
-        .btn-lg {
-            width: 100%;
-            margin-bottom: 0.5rem;
-        }
-    }
-</style>
-{% endblock %}
-
 {% block scripts %}
 <script>
-    function shareBooking() {
-        if (navigator.share) {
-            navigator.share({
-                title: 'My Event Booking',
-                text: 'My venue booking has been confirmed!',
-                url: window.location.href
-            });
-        } else {
-            // Fallback for browsers that don't support Web Share API
-            const url = window.location.href;
-            navigator.clipboard.writeText(url).then(() => {
-                alert('Booking link copied to clipboard!');
-            });
-        }
-    }
-
     function downloadBooking() {
-        // Create a simple booking confirmation text
-        const bookingDetails = `
-BOOKING CONFIRMATION
-====================
+        // Use consistent formatting and remove extra whitespace
+        const bookingDetails = [
+            "BOOKING CONFIRMATION",
+            "====================",
+            "Reference: {{ booking.reference_number }}",
+            "Event: {{ booking.event_title }}",
+            "Venue: {{ booking.venue.name }}",
+            "Date: {{ booking.event_date.strftime('%B %d, %Y') }}",
+            "Time: {{ booking.start_time }} to {{ booking.end_time }}",
+            "Status: {{ booking.status|title }}",
+            {% if booking.admin_response %}"Admin Response: {{ booking.admin_response|replace('\n', ' ')|replace('\r', '') }}",
+            {% endif %}
+            "",
+            "Generated on: " + new Date().toLocaleString()
+        ].join('\n');
 
-Reference: {{ booking.reference_number or booking.booking_id }}
-Event: {{ booking.event_title }}
-Venue: {{ booking.venue.name }}
-Date: {{ booking.event_date.strftime('%A, %B %d, %Y') }}
-Time: {{ booking.start_time }} - {{ booking.end_time }}
-Status: {{ booking.status.title() }}
-
-{% if booking.admin_response %}
-Admin Response: {{ booking.admin_response }}
-{% endif %}
-
-Generated on: ${new Date().toLocaleString()}
-        `.trim();
-
-        const blob = new Blob([bookingDetails], { type: 'text/plain' });
+        const blob = new Blob([bookingDetails], { type: 'text/plain;charset=utf-8' });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'booking-{{ booking.booking_id }}.txt';
+        a.download = 'booking-details-{{ booking.reference_number }}.txt';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -377,15 +155,22 @@ Generated on: ${new Date().toLocaleString()}
     }
 
     function checkStatus() {
-        const btn = event.target;
-        const originalText = btn.innerHTML;
+        const btn = event.currentTarget;
+        const originalContent = btn.innerHTML;
         
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Checking...';
+        btn.innerHTML = `
+            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Checking...
+        `;
         btn.disabled = true;
         
+        // Give a bit of visual feedback before reloading
         setTimeout(() => {
-            location.reload();
-        }, 1500);
+            window.location.reload();
+        }, 1000);
     }
 </script>
 {% endblock %}

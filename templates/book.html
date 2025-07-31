@@ -3,409 +3,118 @@
 {% block title %}Book a Venue{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8 col-xl-7">
-            <!-- Progress Indicator -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-body p-3">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" 
-                                 style="width: 40px; height: 40px;">
-                                <i class="fas fa-calendar-plus text-white"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="mb-0 fw-bold">Step 1 of 2</h6>
-                            <small class="text-muted">Fill in your booking details</small>
-                        </div>
-                        <div class="flex-shrink-0">
-                            <div class="progress" style="width: 100px; height: 8px;">
-                                <div class="progress-bar bg-primary" role="progressbar" style="width: 50%"></div>
-                            </div>
-                        </div>
+<div class="bg-slate-50">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12" x-data="{ step: 1 }">
+        <!-- Form Header and Progress -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Book Your Venue</h1>
+            <p class="mt-3 max-w-2xl mx-auto text-lg text-slate-600">
+                A simple two-step process to reserve your space.
+            </p>
+            <!-- Progress Bar -->
+            <div class="mt-6">
+                <div class="flex items-center justify-center">
+                    <div class="flex items-center text-indigo-600">
+                        <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center">1</div>
+                        <span class="ml-2 font-semibold">Your Information</span>
                     </div>
-                </div>
-            </div>
-
-            <!-- Main Booking Form -->
-            <div class="card border-0 shadow">
-                <div class="card-header text-center py-4">
-                    <h3 class="mb-1 fw-bold">
-                        <i class="fas fa-calendar-plus me-2 text-primary"></i>Book Your Venue
-                    </h3>
-                    <p class="text-muted mb-0">Fill in the details below to submit your booking request</p>
-                </div>
-                
-                <div class="card-body p-4 p-md-5">
-                    <form method="POST" id="bookingForm" novalidate>
-                        {{ form.hidden_tag() }}
-                        
-                        <!-- Personal Information Section -->
-                        <div class="form-section mb-5">
-                            <h5 class="fw-bold mb-4 text-primary">
-                                <i class="fas fa-user me-2"></i>Personal Information
-                            </h5>
-                            
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        {{ form.user_name(class="form-control", placeholder="Your full name") }}
-                                        {{ form.user_name.label(class="form-label") }}
-                                        <div class="invalid-feedback"></div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        {{ form.user_email(class="form-control", placeholder="your.email@example.com") }}
-                                        {{ form.user_email.label(class="form-label") }}
-                                        <div class="invalid-feedback"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Event Information Section -->
-                        <div class="form-section mb-5">
-                            <h5 class="fw-bold mb-4 text-primary">
-                                <i class="fas fa-calendar-alt me-2"></i>Event Information
-                            </h5>
-                            
-                            <div class="mb-4">
-                                <div class="form-floating">
-                                    {{ form.event_title(class="form-control", placeholder="Enter your event title") }}
-                                    {{ form.event_title.label(class="form-label") }}
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-
-                            <div class="mb-4">
-                                {{ form.event_description.label(class="form-label fw-semibold") }}
-                                {{ form.event_description(class="form-control", rows="4", placeholder="Describe your event, special requirements, or additional information...") }}
-                                <div class="form-text">
-                                    <i class="fas fa-info-circle me-1"></i>
-                                    Optional: Provide details about your event to help us serve you better
-                                </div>
-                                <div class="invalid-feedback"></div>
-                            </div>
-
-                            <div class="row g-3">
-                                <div class="col-md-4">
-                                    {{ form.event_date.label(class="form-label fw-semibold") }}
-                                    {{ form.event_date(class="form-control") }}
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-floating">
-                                        {{ form.start_time(class="form-control", placeholder="Start time") }}
-                                        {{ form.start_time.label(class="form-label") }}
-                                        <div class="invalid-feedback"></div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-floating">
-                                        {{ form.end_time(class="form-control", placeholder="End time") }}
-                                        {{ form.end_time.label(class="form-label") }}
-                                        <div class="invalid-feedback"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Venue Selection Section -->
-                        <div class="form-section mb-5">
-                            <h5 class="fw-bold mb-4 text-primary">
-                                <i class="fas fa-building me-2"></i>Venue Selection
-                            </h5>
-                            
-                            <div class="mb-4">
-                                {{ form.venue_id.label(class="form-label fw-semibold") }}
-                                {{ form.venue_id(class="form-select form-select-lg") }}
-                                <div class="form-text">
-                                    <i class="fas fa-lightbulb me-1"></i>
-                                    Can't find the perfect venue? <a href="{{ url_for('main.view_venues') }}" class="text-decoration-none">Browse all venues</a>
-                                </div>
-                                <div class="invalid-feedback"></div>
-                            </div>
-                            
-                            <!-- Selected Venue Preview -->
-                            <div id="venuePreview" class="card bg-light border-0 d-none">
-                                <div class="card-body p-3">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex-shrink-0">
-                                            <i class="fas fa-building fa-2x text-primary"></i>
-                                        </div>
-                                        <div class="flex-grow-1 ms-3">
-                                            <h6 class="mb-1 fw-bold" id="selectedVenueName"></h6>
-                                            <small class="text-muted" id="selectedVenueDetails"></small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Terms and Conditions -->
-                        <div class="form-section mb-4">
-                            <div class="card bg-light border-0">
-                                <div class="card-body p-4">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="agreeTerms" required>
-                                        <label class="form-check-label" for="agreeTerms">
-                                            I agree to the <a href="#" class="text-decoration-none">Terms and Conditions</a> 
-                                            and understand that this is a booking request subject to approval.
-                                        </label>
-                                        <div class="invalid-feedback">You must agree to the terms and conditions</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Submit Button -->
-                        <div class="d-grid gap-3">
-                            <button type="submit" class="btn btn-success btn-lg py-3" id="submitBtn">
-                                <i class="fas fa-paper-plane me-2"></i>
-                                Submit Booking Request
-                            </button>
-                            
-                            <div class="text-center">
-                                <small class="text-muted">
-                                    <i class="fas fa-shield-alt me-1"></i>
-                                    Your information is secure and will only be used for booking purposes
-                                </small>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Help Section -->
-            <div class="card border-0 shadow-sm mt-4">
-                <div class="card-body p-4 text-center">
-                    <h6 class="fw-bold mb-3">Need Help?</h6>
-                    <p class="text-muted mb-3">
-                        Our team is here to assist you with your booking. 
-                        Contact us if you have any questions or special requirements.
-                    </p>
-                    <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center">
-                        <a href="tel:+1234567890" class="btn btn-outline-primary">
-                            <i class="fas fa-phone me-2"></i>Call Us
-                        </a>
-                        <a href="mailto:support@venuebooking.com" class="btn btn-outline-primary">
-                            <i class="fas fa-envelope me-2"></i>Email Support
-                        </a>
+                    <div class="flex-auto border-t-2 transition-colors duration-500 ease-in-out mx-4" :class="step === 2 ? 'border-indigo-600' : 'border-slate-300'"></div>
+                    <div class="flex items-center transition-colors duration-500 ease-in-out" :class="step === 2 ? 'text-indigo-600' : 'text-slate-500'">
+                        <div class="w-8 h-8 rounded-full border-2 flex items-center justify-center transition-colors duration-500 ease-in-out" :class="step === 2 ? 'bg-indigo-600 text-white border-indigo-600' : 'border-slate-300'">2</div>
+                        <span class="ml-2 font-semibold">Event Details</span>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Main Booking Form -->
+        <div class="mt-12 bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+            <form method="POST" id="bookingForm" class="space-y-8" novalidate>
+                {{ form.hidden_tag() }}
+
+                <!-- Step 1: Personal Information -->
+                <div x-show="step === 1" x-transition>
+                    <h2 class="text-xl font-semibold text-slate-900 border-b border-slate-200 pb-3 mb-6">Step 1: Your Information</h2>
+                    <div class="grid grid-cols-1 gap-y-6">
+                        <div>
+                            <label for="{{ form.user_name.id }}" class="block text-sm font-medium text-slate-700">Full Name</label>
+                            {{ form.user_name(class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm py-3 px-4", placeholder="Jane Doe") }}
+                        </div>
+                        <div>
+                            <label for="{{ form.user_email.id }}" class="block text-sm font-medium text-slate-700">Email Address</label>
+                            {{ form.user_email(class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm py-3 px-4", placeholder="you@example.com") }}
+                        </div>
+                    </div>
+                    <!-- Step 1 Navigation -->
+                    <div class="pt-8 flex justify-end">
+                        <button @click.prevent="step = 2" type="button" class="ml-3 inline-flex justify-center items-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Next: Event Details
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Event Details -->
+                <div x-show="step === 2" x-transition style="display: none;">
+                    <h2 class="text-xl font-semibold text-slate-900 border-b border-slate-200 pb-3 mb-6">Step 2: Event Details</h2>
+                    <div class="grid grid-cols-1 gap-y-6 sm:grid-cols-6 sm:gap-x-6">
+                        
+                        <!-- Venue Selection Logic -->
+                        <div class="sm:col-span-6">
+                            <label for="{{ form.venue_id.id }}" class="block text-sm font-medium text-slate-700">Venue</label>
+                            {% if preselected_venue %}
+                            {# 
+                              Render the field so WTForms can validate it, but make it readonly and style it to look static.
+                              The value is already set in the form object from the route.
+                            #}
+                            {{ form.venue_id(
+                                  class="mt-1 block w-full bg-slate-100 border-slate-300 rounded-md shadow-sm sm:text-sm py-3 px-4 appearance-none", 
+                                  readonly=true, 
+                                  style="pointer-events: none;"
+                                ) 
+                            }}
+                        {% else %}
+                            {# Render the normal dropdown if no venue was pre-selected #}
+                            {{ form.venue_id(class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm py-3 px-4") }}
+                        {% endif %}
+                    </div>
+
+                        <div class="sm:col-span-6">
+                            <label for="{{ form.event_title.id }}" class="block text-sm font-medium text-slate-700">Event Title</label>
+                            {{ form.event_title(class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm py-3 px-4", placeholder="e.g., Annual Company Gala") }}
+                        </div>
+                        
+                        <div class="sm:col-span-2">
+                            <label for="{{ form.event_date.id }}" class="block text-sm font-medium text-slate-700">Event Date</label>
+                            {{ form.event_date(class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm py-3 px-4") }}
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <label for="{{ form.start_time.id }}" class="block text-sm font-medium text-slate-700">Start Time</label>
+                            {{ form.start_time(class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm py-3 px-4") }}
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <label for="{{ form.end_time.id }}" class="block text-sm font-medium text-slate-700">End Time</label>
+                            {{ form.end_time(class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm py-3 px-4") }}
+                        </div>
+
+                        <div class="sm:col-span-6">
+                            <label for="{{ form.event_description.id }}" class="block text-sm font-medium text-slate-700">Additional Information (Optional)</label>
+                            {{ form.event_description(class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm py-3 px-4", rows="4", placeholder="Any special requests or details about your event...") }}
+                        </div>
+                    </div>
+                    <!-- Step 2 Navigation -->
+                    <div class="pt-8 flex justify-between">
+                        <button @click.prevent="step = 1" type="button" class="bg-white py-3 px-6 border border-slate-300 rounded-md shadow-sm text-base font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Back
+                        </button>
+                        <button type="submit" class="inline-flex justify-center items-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Submit Request
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
-{% endblock %}
-
-{% block extra_css %}
-<style>
-    .form-section {
-        position: relative;
-    }
-
-    .form-section::before {
-        content: '';
-        position: absolute;
-        left: -2rem;
-        top: 0;
-        bottom: 0;
-        width: 3px;
-        background: var(--primary-gradient);
-        border-radius: 3px;
-    }
-
-    .form-floating > .form-control:focus ~ label,
-    .form-floating > .form-control:not(:placeholder-shown) ~ label {
-        color: var(--bs-primary);
-    }
-
-    .form-floating > .form-control:focus {
-        border-color: var(--bs-primary);
-        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-    }
-
-    .form-select:focus {
-        border-color: var(--bs-primary);
-        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-    }
-
-    .form-check-input:checked {
-        background-color: var(--bs-primary);
-        border-color: var(--bs-primary);
-    }
-
-    .form-check-input:focus {
-        border-color: var(--bs-primary);
-        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-    }
-
-    #venuePreview {
-        animation: slideDown 0.3s ease-out;
-    }
-
-    @keyframes slideDown {
-        from {
-            opacity: 0;
-            transform: translateY(-10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* Mobile optimizations */
-    @media (max-width: 768px) {
-        .form-section::before {
-            left: -1rem;
-        }
-        
-        .card-body {
-            padding: 1.5rem 1rem;
-        }
-        
-        .btn-lg {
-            padding: 1rem 2rem;
-        }
-    }
-
-    /* Loading state for submit button */
-    .btn-loading {
-        position: relative;
-        pointer-events: none;
-    }
-
-    .btn-loading::after {
-        content: '';
-        position: absolute;
-        width: 1rem;
-        height: 1rem;
-        margin: auto;
-        border: 2px solid transparent;
-        border-top-color: #ffffff;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        right: 0;
-    }
-</style>
-{% endblock %}
-
-{% block scripts %}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const form = document.getElementById('bookingForm');
-        const submitBtn = document.getElementById('submitBtn');
-        const venueSelect = document.getElementById('venue_id');
-        const venuePreview = document.getElementById('venuePreview');
-        const eventDateInput = document.getElementById('event_date');
-        const startTimeInput = document.getElementById('start_time');
-        const endTimeInput = document.getElementById('end_time');
-
-        // Set minimum date to today
-        const today = new Date().toISOString().split('T')[0];
-        eventDateInput.setAttribute('min', today);
-
-        // Venue selection preview
-        venueSelect.addEventListener('change', function() {
-            if (this.value) {
-                // Show venue preview (in real implementation, fetch venue details)
-                const selectedOption = this.options[this.selectedIndex];
-                document.getElementById('selectedVenueName').textContent = selectedOption.text;
-                document.getElementById('selectedVenueDetails').textContent = 'Click to view full details';
-                venuePreview.classList.remove('d-none');
-            } else {
-                venuePreview.classList.add('d-none');
-            }
-        });
-
-        // Time validation
-        startTimeInput.addEventListener('change', validateTimes);
-        endTimeInput.addEventListener('change', validateTimes);
-
-        function validateTimes() {
-            if (startTimeInput.value && endTimeInput.value) {
-                const startTime = new Date(`2000-01-01T${startTimeInput.value}`);
-                const endTime = new Date(`2000-01-01T${endTimeInput.value}`);
-                
-                if (endTime <= startTime) {
-                    endTimeInput.setCustomValidity('End time must be after start time');
-                    endTimeInput.classList.add('is-invalid');
-                } else {
-                    endTimeInput.setCustomValidity('');
-                    endTimeInput.classList.remove('is-invalid');
-                }
-            }
-        }
-
-        // Form submission with validation
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Custom validation
-            let isValid = true;
-            const requiredFields = form.querySelectorAll('[required]');
-            
-            requiredFields.forEach(field => {
-                if (!field.value.trim()) {
-                    field.classList.add('is-invalid');
-                    isValid = false;
-                } else {
-                    field.classList.remove('is-invalid');
-                }
-            });
-
-            // Email validation
-            const emailField = document.getElementById('user_email');
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (emailField.value && !emailRegex.test(emailField.value)) {
-                emailField.classList.add('is-invalid');
-                emailField.nextElementSibling.textContent = 'Please enter a valid email address';
-                isValid = false;
-            }
-
-            if (isValid) {
-                // Show loading state
-                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Submitting...';
-                submitBtn.classList.add('btn-loading');
-                submitBtn.disabled = true;
-                
-                // Update progress
-                document.querySelector('.progress-bar').style.width = '100%';
-                document.querySelector('.progress-bar').classList.add('bg-success');
-                
-                // Submit form (remove preventDefault in production)
-                setTimeout(() => {
-                    form.submit();
-                }, 1000);
-            } else {
-                // Scroll to first error
-                const firstError = form.querySelector('.is-invalid');
-                if (firstError) {
-                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    firstError.focus();
-                }
-            }
-        });
-
-        // Real-time validation
-        const inputs = form.querySelectorAll('input, select, textarea');
-        inputs.forEach(input => {
-            input.addEventListener('blur', function() {
-                if (this.hasAttribute('required') && !this.value.trim()) {
-                    this.classList.add('is-invalid');
-                } else {
-                    this.classList.remove('is-invalid');
-                }
-            });
-        });
-    });
-</script>
 {% endblock %}
