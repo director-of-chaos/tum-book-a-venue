@@ -1,113 +1,52 @@
 {% extends "base.html" %}
 
 {% block content %}
-<!-- Hero Section -->
-<div class="relative bg-slate-900 overflow-hidden">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="relative z-10 py-24 md:py-32 lg:py-40">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <!-- Text Content -->
-                <div>
-                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white">
-                        The ideal space for your <span class="text-indigo-400">next event</span>.
-                    </h1>
-                    <p class="mt-6 text-lg text-slate-300 max-w-xl">
-                        From corporate meetings to personal celebrations, find and book unique venues with confidence.
-                    </p>
-                    
-                    <!-- Search Form -->
-                    <div class="mt-10 bg-slate-800/50 p-6 rounded-2xl shadow-lg border border-slate-700">
-                        <form action="{{ url_for('main.view_venues') }}" method="GET">
-                            <div class="grid sm:grid-cols-3 gap-4 items-end">
-                                <div class="sm:col-span-2">
-                                    <label for="searchDate" class="block text-sm font-medium text-slate-200 mb-2">Select your event date</label>
-                                    <input type="date" name="date" id="searchDate" class="w-full bg-slate-700 border-slate-600 text-white rounded-md py-3 px-4 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required>
-                                </div>
-                                <div class="sm:col-span-1">
-                                    <button type="submit" class="w-full flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-md transition-colors shadow-md">
-                                        Find Venues
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Image / Graphic -->
-                <div class="hidden lg:flex items-center justify-center">
-                    <div class="relative">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-72 h-72 text-slate-700 opacity-60">
-                            <path d="M12.378 1.602a.75.75 0 00-.756 0L3 7.252v13.5a.75.75 0 00.75.75h16.5a.75.75 0 00.75-.75V7.252L12.378 1.602zM12 15a.75.75 0 01.75.75v3a.75.75 0 01-1.5 0v-3A.75.75 0 0112 15zM12 6.75a.75.75 0 01.75.75v5.25a.75.75 0 01-1.5 0V7.5a.75.75 0 01.75-.75z" />
-                        </svg>
-                        <div class="absolute -top-8 -right-8 bg-indigo-500/20 rounded-full w-40 h-40"></div>
-                        <div class="absolute -bottom-8 -left-8 bg-slate-700/30 rounded-full w-56 h-56"></div>
-                    </div>
-                </div>
+<div class="hero-section text-center">
+    <div class="container">
+        <h1 class="display-4 mb-4">Find Your Perfect Venue</h1>
+        <p class="lead mb-4">Book amazing venues for your events with ease</p>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form action="{{ url_for('main.view_venues') }}" method="GET" class="d-flex gap-3">
+                    <input type="date" name="date" class="form-control" required>
+                    <button type="submit" class="btn btn-light btn-lg">
+                        <i class="fas fa-search"></i> Find Venues
+                    </button>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
-
-<!-- Features Section -->
-<section class="bg-white py-20 sm:py-28">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center">
-            <h2 class="text-3xl font-extrabold text-slate-900 sm:text-4xl">A simpler way to plan events</h2>
-            <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">
-                Everything you need, from discovery to booking, in one place.
-            </p>
+<div class="container my-5">
+    <div class="row text-center">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 venue-card">
+                <div class="card-body">
+                    <i class="fas fa-calendar-alt fa-3x text-primary mb-3"></i>
+                    <h4>Easy Booking</h4>
+                    <p>Select your date and browse available venues in just a few clicks.</p>
+                </div>
+            </div>
         </div>
-        
-        <div class="mt-16 grid gap-10 md:grid-cols-2 lg:grid-cols-3">
-            <!-- Feature 1 -->
-            <div class="p-8 bg-slate-50 rounded-2xl transition hover:shadow-xl hover:-translate-y-1">
-                <div class="flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 text-indigo-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 venue-card">
+                <div class="card-body">
+                    <i class="fas fa-envelope fa-3x text-success mb-3"></i>
+                    <h4>Instant Notifications</h4>
+                    <p>Get email updates on your booking status and confirmations.</p>
                 </div>
-                <h3 class="mt-6 text-lg font-bold text-slate-900">Effortless Search</h3>
-                <p class="mt-2 text-base text-slate-600">
-                    Quickly filter through our curated list of venues by date, capacity, and amenities to find your perfect match.
-                </p>
             </div>
-            
-            <!-- Feature 2 -->
-            <div class="p-8 bg-slate-50 rounded-2xl transition hover:shadow-xl hover:-translate-y-1">
-                 <div class="flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 text-indigo-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 venue-card">
+                <div class="card-body">
+                    <i class="fab fa-google fa-3x text-warning mb-3"></i>
+                    <h4>Calendar Integration</h4>
+                    <p>Add approved bookings directly to your Google Calendar.</p>
                 </div>
-                <h3 class="mt-6 text-lg font-bold text-slate-900">Instant Confirmation</h3>
-                <p class="mt-2 text-base text-slate-600">
-                    Receive real-time email notifications and instant confirmation once your booking request is approved. No waiting games.
-                </p>
-            </div>
-
-            <!-- Feature 3 -->
-            <div class="p-8 bg-slate-50 rounded-2xl transition hover:shadow-xl hover:-translate-y-1">
-                 <div class="flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 text-indigo-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0H21" /></svg>
-                </div>
-                <h3 class="mt-6 text-lg font-bold text-slate-900">Seamless Scheduling</h3>
-                <p class="mt-2 text-base text-slate-600">
-                    Approved bookings are automatically added to your Google Calendar, complete with all the event details you need.
-                </p>
             </div>
         </div>
     </div>
-</section>
-
-<!-- CTA Section -->
-<section class="bg-slate-100">
-    <div class="max-w-4xl mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8">
-        <h2 class="text-3xl font-extrabold text-slate-900 sm:text-4xl">
-            <span class="block">Ready to find your venue?</span>
-        </h2>
-        <p class="mt-4 text-lg leading-6 text-slate-600">
-            Join hundreds of planners who trust EventSpaces for their most important occasions.
-        </p>
-        <a href="{{ url_for('main.view_venues') }}" class="mt-8 w-full inline-flex items-center justify-center px-8 py-4 border border-transparent text-base font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 md:w-auto transition-transform hover:scale-105">
-            Get started
-        </a>
-    </div>
-</section>
+</div>
 {% endblock %}

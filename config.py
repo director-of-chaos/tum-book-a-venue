@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# author: Bill
-
 import os
 from datetime import timedelta
 
@@ -10,9 +6,9 @@ class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY")
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    OAUTHLIB_INSECURE_TRANSPORT = os.environ.get(
-        "OAUTHLIB_INSECURE_TRANSPORT"
-    )  # For local development otherwise Google will complain that the redirect URI is accessed via HTTPS and insecure and will not work
+    OAUTHLIB_INSECURE_TRANSPORT = os.environ.get('OAUTHLIB_INSECURE_TRANSPORT')
+
+
 
     # Email configuration
     MAIL_SERVER = os.environ.get("MAIL_SERVER")

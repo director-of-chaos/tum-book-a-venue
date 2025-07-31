@@ -1,176 +1,74 @@
 {% extends "base.html" %}
 
-{% block title %}Booking Status - {{ booking.reference_number }}{% endblock %}
+{% block title %}Booking Status{% endblock %}
 
 {% block content %}
-<div class="bg-slate-50 py-12 sm:py-16">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="booking-status status-{{ booking.status }}">
+                <div class="text-center mb-4">
+                    {% if booking.status == 'pending' %}
+                        <i class="fas fa-clock fa-4x text-warning mb-3"></i>
+                        <h2>Booking Pending</h2>
+                        <p class="lead">Your booking request is being reviewed by our admin team.</p>
+                    {% elif booking.status == 'approved' %}
+                        <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
+                        <h2>Booking Approved!</h2>
+                        <p class="lead">Congratulations! Your venue booking has been approved.</p>
+                    {% else %}
+                        <i class="fas fa-times-circle fa-4x text-danger mb-3"></i>
+                        <h2>Booking Rejected</h2>
+                        <p class="lead">Unfortunately, your booking request was not approved.</p>
+                    {% endif %}
+                </div>
 
-        <!-- Status Header Card -->
-        {% set status_styles = {
-            'pending':  {'border': 'border-yellow-400', 'bg': 'bg-yellow-100', 'text': 'text-yellow-800', 'icon_bg': 'bg-yellow-200', 'icon_text': 'text-yellow-600'},
-            'approved': {'border': 'border-green-400',   'bg': 'bg-green-100',   'text': 'text-green-800',   'icon_bg': 'bg-green-200',   'icon_text': 'text-green-600'},
-            'rejected': {'border': 'border-red-400',     'bg': 'bg-red-100',     'text': 'text-red-800',     'icon_bg': 'bg-red-200',     'icon_text': 'text-red-600'}
-        } %}
-        {% set current_style = status_styles[booking.status] %}
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Booking Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Booking ID:</strong> {{ booking.booking_id }}<br>
+                                <strong>Event:</strong> {{ booking.event_title }}<br>
+                                <strong>Venue:</strong> {{ booking.venue.name }}<br>
+                                <strong>Date:</strong> {{ booking.event_date }}<br>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Time:</strong> {{ booking.start_time }} - {{ booking.end_time }}<br>
+                                <strong>Status:</strong> 
+                                <span class="badge bg-{{ 'warning' if booking.status == 'pending' else ('success' if booking.status == 'approved' else 'danger') }}">
+                                    {{ booking.status.title() }}
+                                </span><br>
+                                <strong>Submitted:</strong> {{ booking.created_at.strftime('%Y-%m-%d %H:%M') }}
+                            </div>
+                        </div>
+                        
+                        {% if booking.event_description %}
+                        <hr>
+                        <strong>Description:</strong><br>
+                        {{ booking.event_description }}
+                        {% endif %}
 
-        <div class="bg-white shadow-lg rounded-2xl border-t-4 {{ current_style.border }}">
-            <div class="p-6 sm:p-8">
-                <div class="flex items-start sm:items-center gap-4 sm:gap-6">
-                    <div class="flex-shrink-0 h-16 w-16 rounded-full {{ current_style.icon_bg }} flex items-center justify-center">
-                        {% if booking.status == 'pending' %}
-                            <svg class="h-8 w-8 {{ current_style.icon_text }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                        {% elif booking.status == 'approved' %}
-                            <svg class="h-8 w-8 {{ current_style.icon_text }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                        {% else %}
-                             <svg class="h-8 w-8 {{ current_style.icon_text }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        {% if booking.admin_response %}
+                        <hr>
+                        <strong>Admin Response:</strong><br>
+                        {{ booking.admin_response }}
                         {% endif %}
                     </div>
-                    <div>
-                        {% if booking.status == 'pending' %}
-                            <h2 class="text-2xl font-bold text-slate-900">Booking Under Review</h2>
-                            <p class="mt-1 text-slate-600">Your request is being reviewed. We'll notify you via email with an update.</p>
-                        {% elif booking.status == 'approved' %}
-                            <h2 class="text-2xl font-bold text-slate-900">Booking Confirmed!</h2>
-                            <p class="mt-1 text-slate-600">Congratulations! Your venue is reserved. Get ready for an amazing event.</p>
-                        {% else %}
-                            <h2 class="text-2xl font-bold text-slate-900">Booking Not Approved</h2>
-                            <p class="mt-1 text-slate-600">Unfortunately, this request could not be approved. See the admin response below.</p>
-                        {% endif %}
-                    </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Booking Details Card -->
-        <div class="bg-white shadow-lg rounded-2xl">
-            <div class="px-6 py-4 border-b border-slate-200">
-                <h3 class="text-lg font-semibold leading-6 text-slate-900">Booking Details</h3>
-            </div>
-            <div class="p-6 sm:p-8">
-                <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-8">
-                    <div>
-                        <dt class="text-sm font-medium text-slate-500">Reference Number</dt>
-                        <dd class="mt-1 text-slate-900 font-semibold text-lg">{{ booking.reference_number }}</dd>
-                    </div>
-                    <div>
-                        <dt class="text-sm font-medium text-slate-500">Status</dt>
-                        <dd class="mt-1"><span class="inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold {{ current_style.bg }} {{ current_style.text }}">{{ booking.status|title }}</span></dd>
-                    </div>
-                    <div class="sm:col-span-2">
-                        <dt class="text-sm font-medium text-slate-500">Event Title</dt>
-                        <dd class="mt-1 text-slate-900 font-semibold">{{ booking.event_title }}</dd>
-                    </div>
-                    <div>
-                        <dt class="text-sm font-medium text-slate-500">Venue</dt>
-                        <dd class="mt-1 text-slate-900">{{ booking.venue.name }}</dd>
-                    </div>
-                    <div>
-                        <dt class="text-sm font-medium text-slate-500">Date & Time</dt>
-                        <dd class="mt-1 text-slate-900">{{ booking.event_date.strftime('%B %d, %Y') }} from {{ booking.start_time }} to {{ booking.end_time }}</dd>
-                    </div>
-                    
-                    {% if booking.event_description %}
-                    <div class="sm:col-span-2">
-                        <dt class="text-sm font-medium text-slate-500">Event Description</dt>
-                        <dd class="mt-2 text-slate-700 bg-slate-50 p-4 rounded-md border border-slate-200">{{ booking.event_description }}</dd>
-                    </div>
-                    {% endif %}
-
-                    {% if booking.admin_response %}
-                    <div class="sm:col-span-2">
-                        <dt class="text-sm font-medium text-slate-500">Admin Response</dt>
-                        <dd class="mt-2 text-slate-800 {{ current_style.bg }} p-4 rounded-md border {{ current_style.border }}">{{ booking.admin_response }}</dd>
-                    </div>
-                    {% endif %}
-                </dl>
-            </div>
-        </div>
-
-        <!-- Actions & Help Section -->
-        <div class="bg-white shadow-lg rounded-2xl p-6 sm:p-8 text-center">
-            {% if booking.status == 'approved' %}
-                <h3 class="text-lg font-semibold text-slate-900">What's Next?</h3>
-                <div class="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
-                    <a href="{{ url_for('main.add_to_calendar', booking_id=booking.booking_id) }}" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
-                        Add to Google Calendar
-                    </a>
-                    <button onclick="downloadBooking()" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50">
-                        Download Details
-                    </button>
-                </div>
-            {% elif booking.status == 'pending' %}
-                <h3 class="text-lg font-semibold text-slate-900">Need to make a change?</h3>
-                <p class="mt-2 text-sm text-slate-600">Please contact support to modify or cancel your pending request.</p>
-                <div class="mt-6">
-                    <button onclick="checkStatus()" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
-                        Refresh Status
-                    </button>
-                </div>
-            {% else %}
-                 <h3 class="text-lg font-semibold text-slate-900">What now?</h3>
-                <p class="mt-2 text-sm text-slate-600">Don't worry, there are other options available.</p>
-                <div class="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
-                    <a href="{{ url_for('main.view_venues') }}" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50">
-                        Find Other Venues
-                    </a>
-                    <a href="{{ url_for('main.book_venue') }}" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
-                        Submit a New Request
+                {% if booking.status == 'approved' %}
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('main.add_to_calendar', booking_id=booking.booking_id) }}" 
+                       class="btn btn-warning btn-lg">
+                        <i class="fab fa-google"></i> Add to Google Calendar
                     </a>
                 </div>
-            {% endif %}
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-    function downloadBooking() {
-        // Use consistent formatting and remove extra whitespace
-        const bookingDetails = [
-            "BOOKING CONFIRMATION",
-            "====================",
-            "Reference: {{ booking.reference_number }}",
-            "Event: {{ booking.event_title }}",
-            "Venue: {{ booking.venue.name }}",
-            "Date: {{ booking.event_date.strftime('%B %d, %Y') }}",
-            "Time: {{ booking.start_time }} to {{ booking.end_time }}",
-            "Status: {{ booking.status|title }}",
-            {% if booking.admin_response %}"Admin Response: {{ booking.admin_response|replace('\n', ' ')|replace('\r', '') }}",
-            {% endif %}
-            "",
-            "Generated on: " + new Date().toLocaleString()
-        ].join('\n');
-
-        const blob = new Blob([bookingDetails], { type: 'text/plain;charset=utf-8' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'booking-details-{{ booking.reference_number }}.txt';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-    }
-
-    function checkStatus() {
-        const btn = event.currentTarget;
-        const originalContent = btn.innerHTML;
-        
-        btn.innerHTML = `
-            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            Checking...
-        `;
-        btn.disabled = true;
-        
-        // Give a bit of visual feedback before reloading
-        setTimeout(() => {
-            window.location.reload();
-        }, 1000);
-    }
-</script>
 {% endblock %}
