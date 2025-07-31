@@ -1,19 +1,26 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# author: Bill
+
 from flask import current_app, url_for, render_template_string
 from flask_mail import Mail, Message
 
 mail = Mail()
 
+
 def send_admin_notification(booking):
     """Send HTML email notification to admin about new booking request"""
     try:
         msg = Message(
-            subject=f'New Venue Booking Request - {booking.event_title}',
-            sender=current_app.config['MAIL_USERNAME'],
-            recipients=[current_app.config['ADMIN_EMAIL']]
+            subject=f"New Venue Booking Request - {booking.event_title}",
+            sender=current_app.config["MAIL_USERNAME"],
+            recipients=[current_app.config["ADMIN_EMAIL"]],
         )
-        
-        review_url = url_for('main.admin_review', booking_id=booking.booking_id, _external=True)
-        
+
+        review_url = url_for(
+            "main.admin_review", booking_id=booking.booking_id, _external=True
+        )
+
         # HTML email template
         html_template = """
         <!DOCTYPE html>
@@ -96,9 +103,11 @@ def send_admin_notification(booking):
         </body>
         </html>
         """
-        
-        msg.html = render_template_string(html_template, booking=booking, review_url=review_url)
-        
+
+        msg.html = render_template_string(
+            html_template, booking=booking, review_url=review_url
+        )
+
         # Plain text fallback
         msg.body = f"""
 New venue booking request received:
@@ -113,26 +122,29 @@ Description: {booking.event_description}
 
 To review and respond: {review_url}
         """
-        
+
         mail.send(msg)
         return True
     except Exception as e:
         current_app.logger.error(f"Error sending admin notification: {e}")
         return False
 
+
 def send_user_notification(booking):
     """Send HTML email notification to user about booking status"""
     try:
         status_text = "approved" if booking.status == "approved" else "rejected"
         msg = Message(
-            subject=f'Venue Booking {status_text.title()} - {booking.event_title}',
-            sender=current_app.config['MAIL_USERNAME'],
-            recipients=[booking.user_email]
+            subject=f"Venue Booking {status_text.title()} - {booking.event_title}",
+            sender=current_app.config["MAIL_USERNAME"],
+            recipients=[booking.user_email],
         )
-        
+
         # HTML email template
         if booking.status == "approved":
-            calendar_url = url_for('main.add_to_calendar', booking_id=booking.booking_id, _external=True)
+            calendar_url = url_for(
+                "main.add_to_calendar", booking_id=booking.booking_id, _external=True
+            )
             html_template = """
             <!DOCTYPE html>
             <html>
@@ -182,7 +194,9 @@ def send_user_notification(booking):
             </body>
             </html>
             """
-            msg.html = render_template_string(html_template, booking=booking, calendar_url=calendar_url)
+            msg.html = render_template_string(
+                html_template, booking=booking, calendar_url=calendar_url
+            )
         else:
             html_template = """
             <!DOCTYPE html>
@@ -229,7 +243,7 @@ def send_user_notification(booking):
             </html>
             """
             msg.html = render_template_string(html_template, booking=booking)
-        
+
         mail.send(msg)
         return True
     except Exception as e:

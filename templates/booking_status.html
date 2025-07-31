@@ -5,70 +5,387 @@
 {% block content %}
 <div class="container my-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="booking-status status-{{ booking.status }}">
+        <div class="col-lg-8 col-xl-7">
+            <!-- Status Header -->
+            <div class="status-card status-{{ booking.status }} mb-4">
                 <div class="text-center mb-4">
                     {% if booking.status == 'pending' %}
-                        <i class="fas fa-clock fa-4x text-warning mb-3"></i>
-                        <h2>Booking Pending</h2>
-                        <p class="lead">Your booking request is being reviewed by our admin team.</p>
+                        <div class="status-icon mb-4">
+                            <i class="fas fa-clock fa-4x text-warning pulse"></i>
+                        </div>
+                        <h2 class="fw-bold mb-3">Booking Under Review</h2>
+                        <p class="lead mb-0">Your booking request is being carefully reviewed by our admin team.</p>
+                        <small class="text-muted">We'll notify you via email once we have an update.</small>
                     {% elif booking.status == 'approved' %}
-                        <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
-                        <h2>Booking Approved!</h2>
-                        <p class="lead">Congratulations! Your venue booking has been approved.</p>
+                        <div class="status-icon mb-4">
+                            <i class="fas fa-check-circle fa-4x text-success bounce"></i>
+                        </div>
+                        <h2 class="fw-bold mb-3 text-success">Booking Confirmed!</h2>
+                        <p class="lead mb-0">Congratulations! Your venue booking has been approved.</p>
+                        <small class="text-muted">Get ready for an amazing event!</small>
                     {% else %}
-                        <i class="fas fa-times-circle fa-4x text-danger mb-3"></i>
-                        <h2>Booking Rejected</h2>
-                        <p class="lead">Unfortunately, your booking request was not approved.</p>
+                        <div class="status-icon mb-4">
+                            <i class="fas fa-times-circle fa-4x text-danger shake"></i>
+                        </div>
+                        <h2 class="fw-bold mb-3 text-danger">Booking Not Approved</h2>
+                        <p class="lead mb-0">Unfortunately, your booking request was not approved.</p>
+                        <small class="text-muted">Please see the details below and consider alternative options.</small>
                     {% endif %}
                 </div>
+            </div>
 
-                <div class="card">
-                    <div class="card-header">
-                        <h5>Booking Details</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <strong>Booking ID:</strong> {{ booking.booking_id }}<br>
-                                <strong>Event:</strong> {{ booking.event_title }}<br>
-                                <strong>Venue:</strong> {{ booking.venue.name }}<br>
-                                <strong>Date:</strong> {{ booking.event_date }}<br>
+            <!-- Booking Details Card -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 py-4">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="fas fa-info-circle text-primary me-2"></i>Booking Details
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="detail-item">
+                                <label class="detail-label">Reference Number</label>
+                                <div class="detail-value">
+                                    <span class="badge bg-primary bg-gradient px-3 py-2 fs-6">
+                                        {{ booking.reference_number or booking.booking_id }}
+                                    </span>
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <strong>Time:</strong> {{ booking.start_time }} - {{ booking.end_time }}<br>
-                                <strong>Status:</strong> 
-                                <span class="badge bg-{{ 'warning' if booking.status == 'pending' else ('success' if booking.status == 'approved' else 'danger') }}">
-                                    {{ booking.status.title() }}
-                                </span><br>
-                                <strong>Submitted:</strong> {{ booking.created_at.strftime('%Y-%m-%d %H:%M') }}
+                            
+                            <div class="detail-item">
+                                <label class="detail-label">Event Title</label>
+                                <div class="detail-value fw-semibold">{{ booking.event_title }}</div>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <label class="detail-label">Venue</label>
+                                <div class="detail-value">
+                                    <i class="fas fa-building text-primary me-2"></i>
+                                    {{ booking.venue.name }}
+                                </div>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <label class="detail-label">Date</label>
+                                <div class="detail-value">
+                                    <i class="fas fa-calendar text-success me-2"></i>
+                                    {{ booking.event_date.strftime('%A, %B %d, %Y') }}
+                                </div>
                             </div>
                         </div>
                         
-                        {% if booking.event_description %}
-                        <hr>
-                        <strong>Description:</strong><br>
-                        {{ booking.event_description }}
-                        {% endif %}
-
-                        {% if booking.admin_response %}
-                        <hr>
-                        <strong>Admin Response:</strong><br>
-                        {{ booking.admin_response }}
-                        {% endif %}
+                        <div class="col-md-6">
+                            <div class="detail-item">
+                                <label class="detail-label">Time</label>
+                                <div class="detail-value">
+                                    <i class="fas fa-clock text-info me-2"></i>
+                                    {{ booking.start_time }} - {{ booking.end_time }}
+                                </div>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <label class="detail-label">Status</label>
+                                <div class="detail-value">
+                                    <span class="badge bg-{{ 'warning' if booking.status == 'pending' else ('success' if booking.status == 'approved' else 'danger') }} bg-gradient px-3 py-2">
+                                        <i class="fas fa-{{ 'clock' if booking.status == 'pending' else ('check' if booking.status == 'approved' else 'times') }} me-1"></i>
+                                        {{ booking.status.title() }}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <label class="detail-label">Submitted</label>
+                                <div class="detail-value text-muted">
+                                    {{ booking.created_at.strftime('%B %d, %Y at %I:%M %p') }}
+                                </div>
+                            </div>
+                            
+                            {% if booking.processed_at %}
+                            <div class="detail-item">
+                                <label class="detail-label">Processed</label>
+                                <div class="detail-value text-muted">
+                                    {{ booking.processed_at.strftime('%B %d, %Y at %I:%M %p') }}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
                     </div>
-                </div>
+                    
+                    {% if booking.event_description %}
+                    <hr class="my-4">
+                    <div class="detail-item">
+                        <label class="detail-label">Event Description</label>
+                        <div class="detail-value">
+                            <div class="p-3 bg-light rounded">
+                                {{ booking.event_description }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
 
-                {% if booking.status == 'approved' %}
-                <div class="text-center mt-4">
-                    <a href="{{ url_for('main.add_to_calendar', booking_id=booking.booking_id) }}" 
-                       class="btn btn-warning btn-lg">
-                        <i class="fab fa-google"></i> Add to Google Calendar
+                    {% if booking.admin_response %}
+                    <hr class="my-4">
+                    <div class="alert alert-{{ 'success' if booking.status == 'approved' else 'danger' }} border-0">
+                        <div class="d-flex align-items-start">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-user-tie fa-lg"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="alert-heading mb-2">Admin Response</h6>
+                                <p class="mb-0">{{ booking.admin_response }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4 text-center">
+                    {% if booking.status == 'approved' %}
+                        <h6 class="fw-bold mb-4">What's Next?</h6>
+                        <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                            <a href="{{ url_for('main.add_to_calendar', booking_id=booking.booking_id) }}" 
+                               class="btn btn-warning btn-lg">
+                                <i class="fab fa-google me-2"></i>Add to Google Calendar
+                            </a>
+                            <button class="btn btn-outline-primary btn-lg" onclick="shareBooking()">
+                                <i class="fas fa-share-alt me-2"></i>Share Event
+                            </button>
+                            <button class="btn btn-outline-success btn-lg" onclick="downloadBooking()">
+                                <i class="fas fa-download me-2"></i>Download Details
+                            </button>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <div class="alert alert-info border-0 mb-0">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-lightbulb fa-lg text-info me-3"></i>
+                                <div class="text-start">
+                                    <strong>Preparation Tips:</strong><br>
+                                    <small>Arrive 30 minutes early for setup. Contact us if you need any additional equipment or have special requirements.</small>
+                                </div>
+                            </div>
+                        </div>
+                    {% elif booking.status == 'pending' %}
+                        <h6 class="fw-bold mb-4">While You Wait</h6>
+                        <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                            <a href="{{ url_for('main.view_venues') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-building me-2"></i>Browse Other Venues
+                            </a>
+                            <button class="btn btn-outline-info" onclick="checkStatus()">
+                                <i class="fas fa-refresh me-2"></i>Refresh Status
+                            </button>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <small class="text-muted">
+                                <i class="fas fa-clock me-1"></i>
+                                Typical review time: 24-48 hours
+                            </small>
+                        </div>
+                    {% else %}
+                        <h6 class="fw-bold mb-4">Alternative Options</h6>
+                        <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                            <a href="{{ url_for('main.book_venue') }}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-plus me-2"></i>Submit New Request
+                            </a>
+                            <a href="{{ url_for('main.view_venues') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-search me-2"></i>Find Alternative Venues
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Help Section -->
+            <div class="text-center mt-4">
+                <p class="text-muted mb-3">Need assistance or have questions?</p>
+                <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center">
+                    <a href="tel:+1234567890" class="btn btn-outline-secondary">
+                        <i class="fas fa-phone me-2"></i>Call Support
+                    </a>
+                    <a href="mailto:support@venuebooking.com" class="btn btn-outline-secondary">
+                        <i class="fas fa-envelope me-2"></i>Email Us
                     </a>
                 </div>
-                {% endif %}
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .status-card {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 3rem 2rem;
+        box-shadow: var(--card-shadow);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .status-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+    }
+
+    .status-pending::before {
+        background: var(--warning-gradient);
+    }
+
+    .status-approved::before {
+        background: var(--success-gradient);
+    }
+
+    .status-rejected::before {
+        background: var(--danger-gradient);
+    }
+
+    .detail-item {
+        margin-bottom: 1.5rem;
+    }
+
+    .detail-label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #6c757d;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .detail-value {
+        font-size: 1rem;
+        color: #333;
+        line-height: 1.5;
+    }
+
+    .status-icon {
+        animation-duration: 2s;
+        animation-iteration-count: infinite;
+    }
+
+    .pulse {
+        animation-name: pulse;
+    }
+
+    .bounce {
+        animation-name: bounce;
+        animation-duration: 1s;
+        animation-iteration-count: 2;
+    }
+
+    .shake {
+        animation-name: shake;
+        animation-duration: 0.5s;
+        animation-iteration-count: 1;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+
+    @keyframes bounce {
+        0%, 20%, 53%, 80%, 100% { transform: translateY(0); }
+        40%, 43% { transform: translateY(-10px); }
+        70% { transform: translateY(-5px); }
+        90% { transform: translateY(-2px); }
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+        .status-card {
+            padding: 2rem 1rem;
+        }
+        
+        .detail-item {
+            margin-bottom: 1rem;
+        }
+        
+        .btn-lg {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function shareBooking() {
+        if (navigator.share) {
+            navigator.share({
+                title: 'My Event Booking',
+                text: 'My venue booking has been confirmed!',
+                url: window.location.href
+            });
+        } else {
+            // Fallback for browsers that don't support Web Share API
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(() => {
+                alert('Booking link copied to clipboard!');
+            });
+        }
+    }
+
+    function downloadBooking() {
+        // Create a simple booking confirmation text
+        const bookingDetails = `
+BOOKING CONFIRMATION
+====================
+
+Reference: {{ booking.reference_number or booking.booking_id }}
+Event: {{ booking.event_title }}
+Venue: {{ booking.venue.name }}
+Date: {{ booking.event_date.strftime('%A, %B %d, %Y') }}
+Time: {{ booking.start_time }} - {{ booking.end_time }}
+Status: {{ booking.status.title() }}
+
+{% if booking.admin_response %}
+Admin Response: {{ booking.admin_response }}
+{% endif %}
+
+Generated on: ${new Date().toLocaleString()}
+        `.trim();
+
+        const blob = new Blob([bookingDetails], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'booking-{{ booking.booking_id }}.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }
+
+    function checkStatus() {
+        const btn = event.target;
+        const originalText = btn.innerHTML;
+        
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Checking...';
+        btn.disabled = true;
+        
+        setTimeout(() => {
+            location.reload();
+        }, 1500);
+    }
+</script>
 {% endblock %}
