@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Booking Status{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="booking-status status-{{ booking.status }}">
+                <div class="text-center mb-4">
+                    {% if booking.status == 'pending' %}
+                        <i class="fas fa-clock fa-4x text-warning mb-3"></i>
+                        <h2>Booking Pending</h2>
+                        <p class="lead">Your booking request is being reviewed by our admin team.</p>
+                    {% elif booking.status == 'approved' %}
+                        <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
+                        <h2>Booking Approved!</h2>
+                        <p class="lead">Congratulations! Your venue booking has been approved.</p>
+                    {% else %}
+                        <i class="fas fa-times-circle fa-4x text-danger mb-3"></i>
+                        <h2>Booking Rejected</h2>
+                        <p class="lead">Unfortunately, your booking request was not approved.</p>
+                    {% endif %}
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Booking Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Booking ID:</strong> {{ booking.booking_id }}<br>
+                                <strong>Event:</strong> {{ booking.event_title }}<br>
+                                <strong>Venue:</strong> {{ booking.venue.name }}<br>
+                                <strong>Date:</strong> {{ booking.event_date }}<br>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Time:</strong> {{ booking.start_time }} - {{ booking.end_time }}<br>
+                                <strong>Status:</strong> 
+                                <span class="badge bg-{{ 'warning' if booking.status == 'pending' else ('success' if booking.status == 'approved' else 'danger') }}">
+                                    {{ booking.status.title() }}
+                                </span><br>
+                                <strong>Submitted:</strong> {{ booking.created_at.strftime('%Y-%m-%d %H:%M') }}
+                            </div>
+                        </div>
+                        
+                        {% if booking.event_description %}
+                        <hr>
+                        <strong>Description:</strong><br>
+                        {{ booking.event_description }}
+                        {% endif %}
+
+                        {% if booking.admin_response %}
+                        <hr>
+                        <strong>Admin Response:</strong><br>
+                        {{ booking.admin_response }}
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if booking.status == 'approved' %}
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('main.add_to_calendar', booking_id=booking.booking_id) }}" 
+                       class="btn btn-warning btn-lg">
+                        <i class="fab fa-google"></i> Add to Google Calendar
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

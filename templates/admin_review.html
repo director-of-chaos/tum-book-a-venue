@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Review Booking Request{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3><i class="fas fa-clipboard-check"></i> Review Booking Request</h3>
+                </div>
+                <div class="card-body">
+                    <!-- Booking Details -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-user"></i> Customer Information</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Name:</strong> {{ booking.user_name }}</p>
+                                    <p><strong>Email:</strong> {{ booking.user_email }}</p>
+                                    <p><strong>Reference:</strong> {{ booking.reference_number }}</p>
+                                    <p><strong>Submitted:</strong> {{ booking.created_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-calendar-alt"></i> Event Details</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Event:</strong> {{ booking.event_title }}</p>
+                                    <p><strong>Venue:</strong> {{ booking.venue.name }}</p>
+                                    <p><strong>Date:</strong> {{ booking.event_date.strftime('%B %d, %Y') }}</p>
+                                    <p><strong>Time:</strong> {{ booking.start_time }} - {{ booking.end_time }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Venue Information -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5><i class="fas fa-building"></i> Venue Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <p><strong>Description:</strong> {{ booking.venue.description }}</p>
+                                    <p><strong>Location:</strong> {{ booking.venue.location }}</p>
+                                    <p><strong>Amenities:</strong> {{ booking.venue.amenities }}</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p><strong>Capacity:</strong> {{ booking.venue.capacity }} people</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Event Description -->
+                    {% if booking.event_description %}
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5><i class="fas fa-info-circle"></i> Event Description</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>{{ booking.event_description }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Response Form -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-reply"></i> Your Response</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST">
+                                {{ form.hidden_tag() }}
+                                
+                                <div class="mb-3">
+                                    {{ form.admin_comments.label(class="form-label") }}
+                                    {{ form.admin_comments(class="form-control", rows="4") }}
+                                    <div class="form-text">Optional: Add comments, conditions, or reason for rejection</div>
+                                </div>
+
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                                    {{ form.approve(class="btn btn-success btn-lg me-md-2") }}
+                                    {{ form.reject(class="btn btn-danger btn-lg") }}
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

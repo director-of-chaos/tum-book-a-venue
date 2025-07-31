@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Response Recorded{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body text-center">
+                    {% if action == 'approved' %}
+                        <i class="fas fa-check-circle fa-5x text-success mb-3"></i>
+                        <h2 class="text-success">Booking Approved!</h2>
+                        <p class="lead">The booking request has been approved successfully.</p>
+                    {% else %}
+                        <i class="fas fa-times-circle fa-5x text-danger mb-3"></i>
+                        <h2 class="text-danger">Booking Rejected</h2>
+                        <p class="lead">The booking request has been rejected.</p>
+                    {% endif %}
+
+                    <div class="card my-4">
+                        <div class="card-header">
+                            <h5>Booking Details</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Reference:</strong> {{ booking.reference_number }}</p>
+                            <p><strong>Customer:</strong> {{ booking.user_name }}</p>
+                            <p><strong>Event:</strong> {{ booking.event_title }}</p>
+                            <p><strong>Date:</strong> {{ booking.event_date.strftime('%B %d, %Y') }}</p>
+                        </div>
+                    </div>
+
+                    {% if email_error %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Response recorded but customer notification email failed to send.
+                            Please contact the customer directly.
+                        </div>
+                    {% else %}
+                        <div class="alert alert-success">
+                            <i class="fas fa-envelope"></i>
+                            Customer has been notified via email.
+                        </div>
+                    {% endif %}
+
+                    <a href="{{ url_for('main.admin_dashboard') }}" class="btn btn-primary">
+                        <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

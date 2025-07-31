@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero-section text-center">
+    <div class="container">
+        <h1 class="display-4 mb-4">Find Your Perfect Venue</h1>
+        <p class="lead mb-4">Book amazing venues for your events with ease</p>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form action="{{ url_for('main.view_venues') }}" method="GET" class="d-flex gap-3">
+                    <input type="date" name="date" class="form-control" required>
+                    <button type="submit" class="btn btn-light btn-lg">
+                        <i class="fas fa-search"></i> Find Venues
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="row text-center">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 venue-card">
+                <div class="card-body">
+                    <i class="fas fa-calendar-alt fa-3x text-primary mb-3"></i>
+                    <h4>Easy Booking</h4>
+                    <p>Select your date and browse available venues in just a few clicks.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 venue-card">
+                <div class="card-body">
+                    <i class="fas fa-envelope fa-3x text-success mb-3"></i>
+                    <h4>Instant Notifications</h4>
+                    <p>Get email updates on your booking status and confirmations.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 venue-card">
+                <div class="card-body">
+                    <i class="fab fa-google fa-3x text-warning mb-3"></i>
+                    <h4>Calendar Integration</h4>
+                    <p>Add approved bookings directly to your Google Calendar.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

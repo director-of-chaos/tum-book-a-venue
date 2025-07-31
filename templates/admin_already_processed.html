@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Already Processed{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="fas fa-info-circle fa-5x text-info mb-3"></i>
+                    <h2>Already Processed</h2>
+                    <p class="lead">This booking request has already been processed.</p>
+
+                    <div class="card my-4">
+                        <div class="card-header">
+                            <h5>Booking Details</h5>
+                        </div>
+                        <div class="card-body text-start">
+                            <p><strong>Reference:</strong> {{ booking.reference_number }}</p>
+                            <p><strong>Customer:</strong> {{ booking.user_name }}</p>
+                            <p><strong>Event:</strong> {{ booking.event_title }}</p>
+                            <p><strong>Status:</strong> 
+                                <span class="badge bg-{{ 'success' if booking.status == 'approved' else 'danger' }}">
+                                    {{ booking.status.title() }}
+                                </span>
+                            </p>
+                            <p><strong>Processed:</strong> {{ booking.processed_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                            {% if booking.admin_response %}
+                            <p><strong>Response:</strong> {{ booking.admin_response }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <a href="{{ url_for('main.admin_dashboard') }}" class="btn btn-primary">
+                        <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
