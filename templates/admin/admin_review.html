@@ -1,99 +1,100 @@
-{% extends "base.html" %}
+{% extends "admin/base.html" %}
 
-{% block title %}Review Booking Request{% endblock %}
+{% block title %}Review Request{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-md-10">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h3><i class="fas fa-clipboard-check"></i> Review Booking Request</h3>
+<div class="bg-white shadow-lg rounded-2xl overflow-hidden">
+    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
+        <h1 class="text-xl font-semibold text-slate-800">Review Booking Request</h1>
+        <p class="text-sm text-slate-500">Reference: {{ booking.reference_number }}</p>
+    </div>
+
+    <div class="p-6 md:p-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column: Details -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Event Details -->
+                <div class="border border-slate-200 rounded-lg p-5">
+                    <h3 class="font-semibold text-lg text-slate-900 mb-3">Event Details</h3>
+                    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3 text-sm">
+                        <div class="sm:col-span-2">
+                            <dt class="text-slate-500">Event Title</dt>
+                            <dd class="font-medium text-slate-900">{{ booking.event_title }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-slate-500">Venue</dt>
+                            <dd class="font-medium text-slate-900">{{ booking.venue.name }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-slate-500">Capacity</dt>
+                            <dd class="font-medium text-slate-900">{{ booking.venue.capacity }} people</dd>
+                        </div>
+                        <div>
+                            <dt class="text-slate-500">Date</dt>
+                            <dd class="font-medium text-slate-900">{{ booking.event_date.strftime('%B %d, %Y') }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-slate-500">Time</dt>
+                            <dd class="font-medium text-slate-900">{{ booking.start_time }} - {{ booking.end_time }}
+                            </dd>
+                        </div>
+                    </dl>
                 </div>
-                <div class="card-body">
-                    <!-- Booking Details -->
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <h5><i class="fas fa-user"></i> Customer Information</h5>
-                                </div>
-                                <div class="card-body">
-                                    <p><strong>Name:</strong> {{ booking.user_name }}</p>
-                                    <p><strong>Email:</strong> {{ booking.user_email }}</p>
-                                    <p><strong>Reference:</strong> {{ booking.reference_number }}</p>
-                                    <p><strong>Submitted:</strong> {{ booking.created_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <h5><i class="fas fa-calendar-alt"></i> Event Details</h5>
-                                </div>
-                                <div class="card-body">
-                                    <p><strong>Event:</strong> {{ booking.event_title }}</p>
-                                    <p><strong>Venue:</strong> {{ booking.venue.name }}</p>
-                                    <p><strong>Date:</strong> {{ booking.event_date.strftime('%B %d, %Y') }}</p>
-                                    <p><strong>Time:</strong> {{ booking.start_time }} - {{ booking.end_time }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- Venue Information -->
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h5><i class="fas fa-building"></i> Venue Information</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <p><strong>Description:</strong> {{ booking.venue.description }}</p>
-                                    <p><strong>Location:</strong> {{ booking.venue.location }}</p>
-                                    <p><strong>Amenities:</strong> {{ booking.venue.amenities }}</p>
-                                </div>
-                                <div class="col-md-4">
-                                    <p><strong>Capacity:</strong> {{ booking.venue.capacity }} people</p>
-                                </div>
-                            </div>
-                        </div>
+                <!-- Description -->
+                {% if booking.event_description %}
+                <div class="border border-slate-200 rounded-lg p-5">
+                    <h3 class="font-semibold text-lg text-slate-900 mb-2">Additional Information</h3>
+                    <div class="prose prose-sm max-w-none text-slate-600">
+                        {{ booking.event_description }}
                     </div>
+                </div>
+                {% endif %}
+            </div>
 
-                    <!-- Event Description -->
-                    {% if booking.event_description %}
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h5><i class="fas fa-info-circle"></i> Event Description</h5>
+            <!-- Right Column: Customer & Action -->
+            <div class="space-y-6">
+                <!-- Customer Details -->
+                <div class="border border-slate-200 rounded-lg p-5">
+                    <h3 class="font-semibold text-lg text-slate-900 mb-3">Customer</h3>
+                    <dl class="text-sm space-y-2">
+                        <div>
+                            <dt class="text-slate-500">Name</dt>
+                            <dd class="font-medium text-slate-900">{{ booking.user_name }}</dd>
                         </div>
-                        <div class="card-body">
-                            <p>{{ booking.event_description }}</p>
+                        <div>
+                            <dt class="text-slate-500">Email</dt>
+                            <dd class="font-medium text-slate-900">{{ booking.user_email }}</dd>
                         </div>
-                    </div>
-                    {% endif %}
-
-                    <!-- Response Form -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h5><i class="fas fa-reply"></i> Your Response</h5>
+                        <div>
+                            <dt class="text-slate-500">Submitted</dt>
+                            <dd class="font-medium text-slate-900">{{ booking.created_at.strftime('%b %d, %Y at %-I:%M
+                                %p') }}</dd>
                         </div>
-                        <div class="card-body">
-                            <form method="POST">
-                                {{ form.hidden_tag() }}
-                                
-                                <div class="mb-3">
-                                    {{ form.admin_comments.label(class="form-label") }}
-                                    {{ form.admin_comments(class="form-control", rows="4") }}
-                                    <div class="form-text">Optional: Add comments, conditions, or reason for rejection</div>
-                                </div>
-
-                                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                                    {{ form.approve(class="btn btn-success btn-lg me-md-2") }}
-                                    {{ form.reject(class="btn btn-danger btn-lg") }}
-                                </div>
-                            </form>
+                    </dl>
+                </div>
+                <!-- Response Form -->
+                <div class="border border-slate-200 rounded-lg p-5">
+                    <h3 class="font-semibold text-lg text-slate-900 mb-3">Take Action</h3>
+                    <form method="POST" class="space-y-4">
+                        {{ form.hidden_tag() }}
+                        <div>
+                            <label for="{{ form.admin_comments.id }}" class="block text-sm font-medium text-slate-700">
+                                {{ form.admin_comments.label.text }}
+                            </label>
+                            {{ form.admin_comments(class="mt-1 block w-full border-slate-300 rounded-md shadow-sm
+                            focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm", rows="3") }}
+                            <p class="mt-1 text-xs text-slate-500">Optional comments for the customer.</p>
                         </div>
-                    </div>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            {{ form.reject(class="w-full inline-flex justify-center py-2 px-4 border border-transparent
+                            shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700
+                            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500") }}
+                            {{ form.approve(class="w-full inline-flex justify-center py-2 px-4 border border-transparent
+                            shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700
+                            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500") }}
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

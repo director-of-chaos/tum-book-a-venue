@@ -1,42 +1,41 @@
-{% extends "base.html" %}
+{% extends "admin/base.html" %}
 
 {% block title %}Already Processed{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-body text-center">
-                    <i class="fas fa-info-circle fa-5x text-info mb-3"></i>
-                    <h2>Already Processed</h2>
-                    <p class="lead">This booking request has already been processed.</p>
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white shadow-lg rounded-2xl p-8 text-center">
+        <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto ring-4 ring-blue-50">
+            <svg class="w-8 h-8 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+            </svg>
+        </div>
+        <h1 class="mt-5 text-2xl font-bold tracking-tight text-slate-900">Request Already Processed</h1>
+        <p class="mt-1 text-slate-600">This booking request was actioned previously.</p>
 
-                    <div class="card my-4">
-                        <div class="card-header">
-                            <h5>Booking Details</h5>
-                        </div>
-                        <div class="card-body text-start">
-                            <p><strong>Reference:</strong> {{ booking.reference_number }}</p>
-                            <p><strong>Customer:</strong> {{ booking.user_name }}</p>
-                            <p><strong>Event:</strong> {{ booking.event_title }}</p>
-                            <p><strong>Status:</strong> 
-                                <span class="badge bg-{{ 'success' if booking.status == 'approved' else 'danger' }}">
-                                    {{ booking.status.title() }}
-                                </span>
-                            </p>
-                            <p><strong>Processed:</strong> {{ booking.processed_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
-                            {% if booking.admin_response %}
-                            <p><strong>Response:</strong> {{ booking.admin_response }}</p>
-                            {% endif %}
-                        </div>
-                    </div>
+        <div class="mt-6 text-sm text-left bg-slate-50 border border-slate-200 rounded-lg p-4 space-y-2">
+            <p><strong>Ref:</strong> {{ booking.reference_number }}</p>
+            <p><strong>Event:</strong> {{ booking.event_title }}</p>
+            <p><strong>Status:</strong>
+                {% if booking.status == 'approved' %}
+                <span class="font-medium text-green-700">Approved</span>
+                {% else %}
+                <span class="font-medium text-red-700">Rejected</span>
+                {% endif %}
+            </p>
+            <p><strong>Processed:</strong> {{ booking.processed_at.strftime('%B %d, %Y at %-I:%M %p') }}</p>
+            {% if booking.admin_response %}
+            <p><strong>Response:</strong> "{{ booking.admin_response }}"</p>
+            {% endif %}
+        </div>
 
-                    <a href="{{ url_for('main.admin_dashboard') }}" class="btn btn-primary">
-                        <i class="fas fa-tachometer-alt"></i> Go to Dashboard
-                    </a>
-                </div>
-            </div>
+        <div class="mt-8">
+            <a href="{{ url_for('main.admin_dashboard') }}"
+                class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
+                Back to Dashboard
+            </a>
         </div>
     </div>
 </div>

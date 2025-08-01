@@ -1,72 +1,142 @@
 {% extends "base.html" %}
 
-{% block title %}Booking Status{% endblock %}
+{% block title %}Booking Status - {{ booking.reference_number }}{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="booking-status status-{{ booking.status }}">
-                <div class="text-center mb-4">
-                    {% if booking.status == 'pending' %}
-                        <i class="fas fa-clock fa-4x text-warning mb-3"></i>
-                        <h2>Booking Pending</h2>
-                        <p class="lead">Your booking request is being reviewed by our admin team.</p>
-                    {% elif booking.status == 'approved' %}
-                        <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
-                        <h2>Booking Approved!</h2>
-                        <p class="lead">Congratulations! Your venue booking has been approved.</p>
-                    {% else %}
-                        <i class="fas fa-times-circle fa-4x text-danger mb-3"></i>
-                        <h2>Booking Rejected</h2>
-                        <p class="lead">Unfortunately, your booking request was not approved.</p>
-                    {% endif %}
-                </div>
+<div class="bg-slate-50">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16" x-data="{ 
+             status: '{{ booking.status }}',
+             adminResponse: '{{ booking.admin_response | escapejs }}',
+             isLoading: false,
+             checkStatus() {
+                 this.isLoading = true;
+                 fetch(`/api/booking-status/{{ booking.reference_number }}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        this.status = data.status;
+                        this.adminResponse = data.admin_response;
+                    })
+                    .catch(err => console.error(err))
+                    .finally(() => {
+                        setTimeout(() => { this.isLoading = false; }, 500); // Prevent flash of loading state
+                    });
+             }
+         }">
+        <div class="bg-white shadow-xl rounded-2xl overflow-hidden">
+            <div class="p-6 sm:p-10 text-center">
 
-                <div class="card">
-                    <div class="card-header">
-                        <h5>Booking Details</h5>
+                <!-- Status Icon and Header (Now dynamic with Alpine.js) -->
+                <div class="relative">
+                    <!-- Pending State -->
+                    <div x-show="status === 'pending'" x-transition
+                        class="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center mx-auto ring-4 ring-yellow-50">
+                        <svg class="w-8 h-8 text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
                     </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <strong>Booking ID:</strong> {{ booking.booking_id }}<br>
-                                <strong>Event:</strong> {{ booking.event_title }}<br>
-                                <strong>Venue:</strong> {{ booking.venue.name }}<br>
-                                <strong>Date:</strong> {{ booking.event_date }}<br>
-                            </div>
-                            <div class="col-md-6">
-                                <strong>Time:</strong> {{ booking.start_time }} - {{ booking.end_time }}<br>
-                                <strong>Status:</strong> 
-                                <span class="badge bg-{{ 'warning' if booking.status == 'pending' else ('success' if booking.status == 'approved' else 'danger') }}">
-                                    {{ booking.status.title() }}
-                                </span><br>
-                                <strong>Submitted:</strong> {{ booking.created_at.strftime('%Y-%m-%d %H:%M') }}
-                            </div>
-                        </div>
-                        
-                        {% if booking.event_description %}
-                        <hr>
-                        <strong>Description:</strong><br>
-                        {{ booking.event_description }}
-                        {% endif %}
-
-                        {% if booking.admin_response %}
-                        <hr>
-                        <strong>Admin Response:</strong><br>
-                        {{ booking.admin_response }}
-                        {% endif %}
+                    <!-- Approved State -->
+                    <div x-show="status === 'approved'" x-transition style="display: none;"
+                        class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto ring-4 ring-green-50">
+                        <svg class="w-8 h-8 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
                     </div>
+                    <!-- Rejected State -->
+                    <div x-show="status === 'rejected'" x-transition style="display: none;"
+                        class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto ring-4 ring-red-50">
+                        <svg class="w-8 h-8 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                        </svg>
+                    </div>
+
+                    <h1 class="mt-5 text-3xl font-bold tracking-tight text-slate-900"
+                        x-text="status === 'pending' ? 'Request Pending' : (status === 'approved' ? 'Booking Approved!' : 'Booking Rejected')">
+                    </h1>
+                    <p class="mt-2 text-lg text-slate-600"
+                        x-text="status === 'pending' ? 'Your booking request is under review.' : (status === 'approved' ? 'Congratulations! Your booking is confirmed.' : 'This booking could not be approved.')">
+                    </p>
                 </div>
 
-                {% if booking.status == 'approved' %}
-                <div class="text-center mt-4">
-                    <a href="{{ url_for('main.add_to_calendar', booking_id=booking.booking_id) }}" 
-                       class="btn btn-warning btn-lg">
-                        <i class="fab fa-google"></i> Add to Google Calendar
-                    </a>
+                <!-- Check Status Button -->
+                <div x-show="status === 'pending'" class="mt-6">
+                    <button @click="checkStatus()" type="button" :disabled="isLoading"
+                        class="inline-flex items-center justify-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md shadow-sm text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 transition">
+                        <svg x-show="isLoading" class="animate-spin -ml-1 mr-3 h-5 w-5 text-slate-500"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                            </circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
+                        </svg>
+                        <span x-text="isLoading ? 'Checking...' : 'Check Status'"></span>
+                    </button>
                 </div>
-                {% endif %}
+            </div>
+
+            <!-- Booking Details Section -->
+            <div class="border-t border-slate-200 bg-slate-50 px-6 sm:px-10 py-8">
+                <h2 class="text-lg font-semibold text-slate-800 mb-4">Booking Details</h2>
+                <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm">
+                    <div>
+                        <dt class="font-medium text-slate-500">Reference Number</dt>
+                        <dd class="mt-1 text-slate-900">{{ booking.reference_number }}</dd>
+                    </div>
+                    <div>
+                        <dt class="font-medium text-slate-500">Status</dt>
+                        <dd class="mt-1">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-medium"
+                                :class="{ 'bg-yellow-100 text-yellow-800': status === 'pending', 'bg-green-100 text-green-800': status === 'approved', 'bg-red-100 text-red-800': status === 'rejected' }"
+                                x-text="status.charAt(0).toUpperCase() + status.slice(1)">
+                            </span>
+                        </dd>
+                    </div>
+                    <!-- Other details remain the same -->
+                    <div>
+                        <dt class="font-medium text-slate-500">Event Title</dt>
+                        <dd class="mt-1 text-slate-900">{{ booking.event_title }}</dd>
+                    </div>
+                    <div>
+                        <dt class="font-medium text-slate-500">Venue</dt>
+                        <dd class="mt-1 text-slate-900">{{ booking.venue.name }}</dd>
+                    </div>
+                    <div>
+                        <dt class="font-medium text-slate-500">Event Date</dt>
+                        <dd class="mt-1 text-slate-900">{{ booking.event_date.strftime('%B %d, %Y') }}</dd>
+                    </div>
+                    <div>
+                        <dt class="font-medium text-slate-500">Event Time</dt>
+                        <dd class="mt-1 text-slate-900">{{ booking.start_time }} - {{ booking.end_time }}</dd>
+                    </div>
+
+                    <!-- Admin Response (Now dynamic) -->
+                    <div x-show="adminResponse" style="display: none;" class="sm:col-span-2">
+                        <dt class="font-medium text-slate-500"
+                            x-text="status === 'rejected' ? 'Reason for Rejection' : 'Admin Comments'"></dt>
+                        <dd class="mt-1 text-slate-900 prose prose-sm max-w-none" x-text="adminResponse"></dd>
+                    </div>
+                </dl>
+            </div>
+
+            <!-- Action Button Footer (Now dynamic) -->
+            <div x-show="status === 'approved'" style="display: none;" x-transition
+                class="border-t border-slate-200 p-6 text-center">
+                <a href="{{ url_for('main.add_to_calendar', booking_id=booking.booking_id) }}"
+                    class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                    <svg class="w-5 h-5 mr-2 -ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                        fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    Add to Google Calendar
+                </a>
             </div>
         </div>
     </div>

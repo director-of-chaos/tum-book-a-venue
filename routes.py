@@ -13,7 +13,7 @@ from flask import (
     jsonify,
     make_response,
 )
-from datetime import datetime, date as date_type, timedelta
+from datetime import datetime, date as date_type, time
 import uuid
 import csv
 import io
@@ -81,90 +81,130 @@ def index():
 
 @main.route("/book", methods=["GET", "POST"])
 def book_venue():
-    # <<< FIX 1: Instantiate the form once. It will auto-populate from request.form on POST. >>>
-    form = BookingForm()
+    if request.method == "POST":
+        form = BookingForm(request.form)
+        if form.validate():
+            # <<< FIX: CONFLICT VALIDATION LOGIC >>>
+            # Convert form times to time objects for comparison
+            new_start_time = datetime.strptime(form.start_time.data, "%H:%M").time()
+            new_end_time = datetime.strptime(form.end_time.data, "%H:%M").time()
 
-    # <<< FIX 2: The validate_on_submit() method now works on the correct data. >>>
-    if form.validate_on_submit():
-        # This block is now correctly reached on a successful POST.
-        booking_id = str(uuid.uuid4())
-        reference_number = generate_reference_number()
+            # Find all approved bookings for the same venue and date
+            conflicting_bookings = BookingRequest.query.filter(
+                BookingRequest.venue_id == form.venue_id.data,
+                BookingRequest.event_date == form.event_date.data,
+                BookingRequest.status == "approved",
+            ).all()
 
-        while BookingRequest.query.filter_by(reference_number=reference_number).first():
+            # Check for time overlap
+            for approved_booking in conflicting_bookings:
+                existing_start = datetime.strptime(
+                    approved_booking.start_time, "%H:%M"
+                ).time()
+                existing_end = datetime.strptime(
+                    approved_booking.end_time, "%H:%M"
+                ).time()
+
+                # Overlap condition: (StartA < EndB) and (StartB < EndA)
+                if new_start_time < existing_end and existing_start < new_end_time:
+                    flash(
+                        f"The selected time slot ({form.start_time.data} - {form.end_time.data}) conflicts with an existing booking. Please choose a different time.",
+                        "danger",
+                    )
+
+                    # We need to re-render the page with an error, so we need the preselected_venue
+                    preselected_venue = Venue.query.get(form.venue_id.data)
+                    # We also need to pass the booked slots again for the frontend to display
+                    booked_slots = []
+                    for b in conflicting_bookings:
+                        booked_slots.append({"start": b.start_time, "end": b.end_time})
+
+                    import json
+
+                    return render_template(
+                        "book.html",
+                        form=form,
+                        preselected_venue=preselected_venue,
+                        booked_slots_json=json.dumps(booked_slots),
+                    )
+            # <<< END OF CONFLICT VALIDATION >>>
+
+            # If no conflicts, proceed to create the booking
+            booking_id = str(uuid.uuid4())
             reference_number = generate_reference_number()
+            while BookingRequest.query.filter_by(
+                reference_number=reference_number
+            ).first():
+                reference_number = generate_reference_number()
 
-        booking = BookingRequest(
-            booking_id=booking_id,
-            reference_number=reference_number,
-            user_name=form.user_name.data,
-            user_email=form.user_email.data,
-            venue_id=form.venue_id.data,
-            event_date=form.event_date.data,
-            start_time=form.start_time.data,
-            end_time=form.end_time.data,
-            event_title=form.event_title.data,
-            event_description=form.event_description.data,
-        )
+            booking = BookingRequest(
+                booking_id=booking_id,
+                reference_number=reference_number,
+                user_name=form.user_name.data,
+                user_email=form.user_email.data,
+                venue_id=form.venue_id.data,
+                event_date=form.event_date.data,
+                start_time=form.start_time.data,
+                end_time=form.end_time.data,
+                event_title=form.event_title.data,
+                event_description=form.event_description.data,
+            )
 
-        db.session.add(booking)
-        db.session.commit()
-
-        if send_admin_notification(booking):
+            db.session.add(booking)
+            db.session.commit()
+            send_admin_notification(booking)
             flash(
-                f"Your booking request has been submitted! Your reference number is {reference_number}. You will receive an email confirmation shortly.",
+                f"Your booking request has been submitted! Your reference number is {reference_number}.",
                 "success",
             )
-        else:
-            flash(
-                f"Booking submitted with reference {reference_number}, but email notification failed. Please contact admin directly.",
-                "warning",
-            )
+            return redirect(url_for("main.booking_status", reference=reference_number))
 
-        return redirect(url_for("main.booking_status", reference=reference_number))
+    else:  # GET Request
+        form = BookingForm()
+        form.venue_id.data = request.args.get("venue", type=int)
 
-    # <<< FIX 3: This part of the code now runs on a GET request OR a failed POST. >>>
-    # On a GET request, we manually populate the form with our defaults.
-    # On a failed POST, WTForms automatically keeps the user's invalid data, so we don't touch it.
-    if request.method == "GET":
-        # Pre-populate venue
-        venue_id = request.args.get("venue", type=int)
-        if venue_id:
-            form.venue_id.data = venue_id
-
-        # Pre-populate date - check both 'date' parameter and current date logic
         date_str = request.args.get("date")
         if date_str:
-            try:
-                form.event_date.data = datetime.strptime(date_str, "%Y-%m-%d").date()
-            except (ValueError, TypeError):
-                form.event_date.data = date_type.today()
+            form.event_date.data = datetime.strptime(date_str, "%Y-%m-%d").date()
         else:
             form.event_date.data = date_type.today()
 
-        # Pre-populate time - only set default if it's for today or future
-        selected_date = form.event_date.data
-        if selected_date == date_type.today():
+        if form.event_date.data == date_type.today():
             form.start_time.data = _get_default_start_time()
         else:
-            # For future dates, default to 9 AM
             form.start_time.data = "09:00"
 
-    # We need the preselected_venue object for template display logic
-    # This must be determined *after* the form is populated (either by GET or by failed POST)
+    # This runs for GET requests and failed POSTs
     preselected_venue = None
-    if form.venue_id.data and form.venue_id.data > 0:
+    booked_slots = []
+    if form.venue_id.data:
         preselected_venue = Venue.query.get(form.venue_id.data)
+        # <<< FIX: Fetch booked slots for the selected venue and date >>>
+        if preselected_venue and form.event_date.data:
+            bookings = BookingRequest.query.filter_by(
+                venue_id=form.venue_id.data,
+                event_date=form.event_date.data,
+                status="approved",
+            ).all()
+            for b in bookings:
+                booked_slots.append({"start": b.start_time, "end": b.end_time})
 
-    return render_template("book.html", form=form, preselected_venue=preselected_venue)
+    import json
+
+    return render_template(
+        "book.html",
+        form=form,
+        preselected_venue=preselected_venue,
+        booked_slots_json=json.dumps(booked_slots),
+    )
 
 
 @main.route("/venues")
 def view_venues():
     selected_date = request.args.get("date")
     venues = Venue.query.order_by(Venue.name).all()
-    today = (
-        date_type.today().isoformat()
-    )  # Pass today's date to template for min attribute
+    today = date_type.today().isoformat()
+    booked_venue_ids = set()  # Use a set for efficient lookups
 
     if selected_date:
         try:
@@ -176,22 +216,16 @@ def view_venues():
                     event_date=date_obj, status="approved"
                 ).all()
             }
-
-            # Filter out the booked venues
-            available_venues = [v for v in venues if v.id not in booked_venue_ids]
-
-            return render_template(
-                "venues.html",
-                venues=available_venues,
-                selected_date=selected_date,
-                today=today,
-            )
         except ValueError:
             flash("Invalid date format provided.", "danger")
-            # Fall through to show all venues if date is invalid
+            # Fall through to show all venues
 
     return render_template(
-        "venues.html", venues=venues, selected_date=selected_date, today=today
+        "venues.html",
+        venues=venues,
+        selected_date=selected_date,
+        today=today,
+        booked_venue_ids=booked_venue_ids,  # Pass the set of booked IDs
     )
 
 
@@ -199,6 +233,16 @@ def view_venues():
 def booking_status(reference):
     booking = BookingRequest.query.filter_by(reference_number=reference).first_or_404()
     return render_template("booking_status.html", booking=booking)
+
+
+@main.route("/api/booking-status/<reference>")
+def api_booking_status(reference):
+    """API endpoint to get the latest booking status."""
+    booking = BookingRequest.query.filter_by(reference_number=reference).first_or_404()
+
+    return jsonify(
+        {"status": booking.status, "admin_response": booking.admin_response or ""}
+    )
 
 
 @main.route("/admin/review/<booking_id>", methods=["GET", "POST"])

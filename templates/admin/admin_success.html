@@ -1,53 +1,63 @@
-{% extends "base.html" %}
+{% extends "admin/base.html" %}
 
-{% block title %}Response Recorded{% endblock %}
+{% block title %}Response Sent{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-body text-center">
-                    {% if action == 'approved' %}
-                        <i class="fas fa-check-circle fa-5x text-success mb-3"></i>
-                        <h2 class="text-success">Booking Approved!</h2>
-                        <p class="lead">The booking request has been approved successfully.</p>
-                    {% else %}
-                        <i class="fas fa-times-circle fa-5x text-danger mb-3"></i>
-                        <h2 class="text-danger">Booking Rejected</h2>
-                        <p class="lead">The booking request has been rejected.</p>
-                    {% endif %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white shadow-lg rounded-2xl p-8 text-center">
+        {% if action == 'approved' %}
+        <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto ring-4 ring-green-50">
+            <svg class="w-8 h-8 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        </div>
+        <h1 class="mt-5 text-2xl font-bold tracking-tight text-slate-900">Booking Approved</h1>
+        <p class="mt-1 text-slate-600">The booking request has been successfully approved.</p>
+        {% else %}
+        <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto ring-4 ring-red-50">
+            <svg class="w-8 h-8 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+            </svg>
+        </div>
+        <h1 class="mt-5 text-2xl font-bold tracking-tight text-slate-900">Booking Rejected</h1>
+        <p class="mt-1 text-slate-600">The booking request has been rejected.</p>
+        {% endif %}
 
-                    <div class="card my-4">
-                        <div class="card-header">
-                            <h5>Booking Details</h5>
-                        </div>
-                        <div class="card-body">
-                            <p><strong>Reference:</strong> {{ booking.reference_number }}</p>
-                            <p><strong>Customer:</strong> {{ booking.user_name }}</p>
-                            <p><strong>Event:</strong> {{ booking.event_title }}</p>
-                            <p><strong>Date:</strong> {{ booking.event_date.strftime('%B %d, %Y') }}</p>
-                        </div>
-                    </div>
+        <div class="mt-6 text-sm text-left bg-slate-50 border border-slate-200 rounded-lg p-4 space-y-2">
+            <p><strong>Ref:</strong> {{ booking.reference_number }}</p>
+            <p><strong>Customer:</strong> {{ booking.user_name }}</p>
+            <p><strong>Event:</strong> {{ booking.event_title }} on {{ booking.event_date.strftime('%b %d') }}</p>
+        </div>
 
-                    {% if email_error %}
-                        <div class="alert alert-warning">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            Response recorded but customer notification email failed to send.
-                            Please contact the customer directly.
-                        </div>
-                    {% else %}
-                        <div class="alert alert-success">
-                            <i class="fas fa-envelope"></i>
-                            Customer has been notified via email.
-                        </div>
-                    {% endif %}
+        {% if email_error %}
+        <div class="mt-6 p-3 rounded-lg bg-yellow-100 text-yellow-800 text-sm flex items-center gap-2">
+            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd"
+                    d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z"
+                    clip-rule="evenodd" />
+            </svg>
+            <span>Response recorded, but the customer notification email failed to send.</span>
+        </div>
+        {% else %}
+        <div class="mt-6 p-3 rounded-lg bg-green-100 text-green-800 text-sm flex items-center gap-2">
+            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                    clip-rule="evenodd" />
+            </svg>
+            <span>The customer has been notified via email.</span>
+        </div>
+        {% endif %}
 
-                    <a href="{{ url_for('main.admin_dashboard') }}" class="btn btn-primary">
-                        <i class="fas fa-tachometer-alt"></i> Go to Dashboard
-                    </a>
-                </div>
-            </div>
+        <div class="mt-8">
+            <a href="{{ url_for('main.admin_dashboard') }}"
+                class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
+                Back to Dashboard
+            </a>
         </div>
     </div>
 </div>

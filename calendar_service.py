@@ -25,52 +25,32 @@ class CalendarService:
 
     def get_authorization_url(self):
         """Get Google OAuth authorization URL"""
-        # Write client config to temporary file
-        config_file = "temp_client_secrets.json"
-        with open(config_file, "w") as f:
-            json.dump(self.client_config, f)
+        flow = Flow.from_client_config(
+            self.client_config, scopes=["https://www.googleapis.com/auth/calendar"]
+        )
+        flow.redirect_uri = self.redirect_uri
 
-        try:
-            flow = Flow.from_client_secrets_file(
-                config_file, scopes=["https://www.googleapis.com/auth/calendar"]
-            )
-            flow.redirect_uri = self.redirect_uri
+        authorization_url, state = flow.authorization_url(
+            access_type="offline", include_granted_scopes="true"
+        )
 
-            authorization_url, state = flow.authorization_url(
-                access_type="offline", include_granted_scopes="true"
-            )
-
-            session["state"] = state
-            return authorization_url
-        finally:
-            # Clean up temporary file
-            if os.path.exists(config_file):
-                os.remove(config_file)
+        session["state"] = state
+        return authorization_url
 
     def handle_oauth_callback(self):
         """Handle OAuth callback and return credentials"""
-        # Write client config to temporary file
-        config_file = "temp_client_secrets.json"
-        with open(config_file, "w") as f:
-            json.dump(self.client_config, f)
+        flow = Flow.from_client_config(
+            self.client_config,
+            scopes=["https://www.googleapis.com/auth/calendar"],
+            state=session.get("state"),
+        )
+        flow.redirect_uri = self.redirect_uri
 
-        try:
-            flow = Flow.from_client_secrets_file(
-                config_file,
-                scopes=["https://www.googleapis.com/auth/calendar"],
-                state=session.get("state"),
-            )
-            flow.redirect_uri = self.redirect_uri
+        # Get authorization response
+        authorization_response = request.url
+        flow.fetch_token(authorization_response=authorization_response)
 
-            # Get authorization response
-            authorization_response = request.url
-            flow.fetch_token(authorization_response=authorization_response)
-
-            return flow.credentials
-        finally:
-            # Clean up temporary file
-            if os.path.exists(config_file):
-                os.remove(config_file)
+        return flow.credentials
 
     def create_calendar_event(self, booking, credentials):
         """Create a calendar event for the booking"""

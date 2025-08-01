@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Panel{% endblock %} - EventSpaces</title>
+
+    <!-- Tailwind CSS -->
+    <link rel="stylesheet" href="{{url_for('static',filename='dist/output.css')}}">
+    <link rel="preconnect" href="https://rsms.me/">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='assets/logo.png') }}" type="image/x-icon">
+</head>
+
+<body class="bg-slate-100 text-slate-800 font-sans antialiased">
+    <!-- Admin Header -->
+    <header class="bg-white shadow-sm">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo & Admin Title -->
+                <div class="flex items-center space-x-4">
+                    <a href="{{ url_for('main.admin_dashboard') }}"
+                        class="flex items-center space-x-2 text-xl font-bold text-slate-900">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                            class="w-6 h-6 text-indigo-600">
+                            <path fill-rule="evenodd"
+                                d="M4.5 2.25a.75.75 0 000 1.5v16.5a.75.75 0 000 1.5h15a.75.75 0 000-1.5V3.75a.75.75 0 000-1.5h-15zM9 6a.75.75 0 000 1.5h.75a.75.75 0 000-1.5H9zm-.75 3.75A.75.75 0 019 9h.75a.75.75 0 010 1.5H9a.75.75 0 01-.75-.75zM9 12a.75.75 0 000 1.5h.75a.75.75 0 000-1.5H9zm3-6a.75.75 0 000 1.5h.75a.75.75 0 000-1.5h-.75zm-.75 3.75a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM12 12a.75.75 0 000 1.5h.75a.75.75 0 000-1.5h-.75zm3-6a.75.75 0 000 1.5h.75a.75.75 0 000-1.5h-.75zm-.75 3.75a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM15 12a.75.75 0 000 1.5h.75a.75.75 0 000-1.5h-.75z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span>EventSpaces</span>
+                    </a>
+                    <span class="text-slate-300">/</span>
+                    <span class="text-lg font-medium text-slate-600">Admin Panel</span>
+                </div>
+                <!-- Admin Nav Links -->
+                <div class="flex items-center space-x-2">
+                    <a class="px-4 py-2 rounded-md text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition-all"
+                        href="{{ url_for('main.admin_dashboard') }}">Dashboard</a>
+                    <a class="px-4 py-2 rounded-md text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition-all"
+                        href="{{ url_for('main.export_bookings') }}">Export CSV</a>
+                    <a class="px-4 py-2 rounded-md text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition-all"
+                        href="{{ url_for('main.index') }}" target="_blank">View Site</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="min-h-screen py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="mb-6">
+                {% for category, message in messages %}
+                {% set alert_class = 'bg-red-100 text-red-800' if category == 'danger' else 'bg-green-100
+                text-green-800' %}
+                <div class="p-4 mb-4 rounded-lg shadow flex items-center {{ alert_class }}" role="alert">
+                    <span class="flex-grow">{{ message }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="bg-slate-200 text-slate-500">
+        <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center text-sm">
+            <p>© EventSpaces Admin Panel</p>
+        </div>
+    </footer>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</body>
+
+</html>

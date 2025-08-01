@@ -7,22 +7,19 @@
     <!-- Header and Filter Section -->
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-10">
         <div>
-            <h1 class="text-3xl font-bold tracking-tight text-slate-900">Available Venues</h1>
-            {% if selected_date %}
-            <p class="mt-1 text-slate-600">Showing venues available on <strong>{{ selected_date }}</strong>.</p>
-            {% else %}
-            <p class="mt-1 text-slate-600">Browse all our spaces or filter by date.</p>
-            {% endif %}
+            <h1 class="text-3xl font-bold tracking-tight text-slate-900">Browse Venues</h1>
+            <p class="mt-1 text-slate-600">
+                {% if selected_date %}
+                Showing availability for <strong>{{ selected_date }}</strong>.
+                {% else %}
+                Browse all our spaces or filter by date to see availability.
+                {% endif %}
+            </p>
         </div>
         <div class="flex items-center gap-3">
             {% if selected_date %}
             <a href="{{ url_for('main.view_venues') }}"
                 class="inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd"
-                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                        clip-rule="evenodd" />
-                </svg>
                 Clear Filter
             </a>
             {% endif %}
@@ -42,38 +39,41 @@
     {% if venues %}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {% for venue in venues %}
+        {% set is_booked = selected_date and venue.id in booked_venue_ids %}
         <div
-            class="bg-white rounded-2xl shadow-lg overflow-hidden transform transition-all hover:-translate-y-1 hover:shadow-2xl flex flex-col">
+            class="bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col transition-all {% if is_booked %}opacity-60 grayscale-[50%]{% else %}hover:-translate-y-1 hover:shadow-2xl{% endif %}">
             <!-- Venue Image with Overlay Text -->
             <div class="relative h-64 overflow-hidden">
-                <!-- Stock photos for different venue types -->
-                {% if 'conference' in venue.name.lower() or 'meeting' in venue.name.lower() %}
-                <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=400&fit=crop&crop=center"
-                    alt="{{ venue.name }}" class="w-full h-full object-cover">
-                {% elif 'garden' in venue.name.lower() or 'outdoor' in venue.name.lower() %}
-                <img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&h=400&fit=crop&crop=center"
-                    alt="{{ venue.name }}" class="w-full h-full object-cover">
-                {% elif 'ballroom' in venue.name.lower() or 'grand' in venue.name.lower() %}
-                <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600&h=400&fit=crop&crop=center"
-                    alt="{{ venue.name }}" class="w-full h-full object-cover">
-                {% elif 'theater' in venue.name.lower() or 'auditorium' in venue.name.lower() %}
-                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop&crop=center"
-                    alt="{{ venue.name }}" class="w-full h-full object-cover">
-                {% elif 'rooftop' in venue.name.lower() %}
-                <img src="https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=600&h=400&fit=crop&crop=center"
-                    alt="{{ venue.name }}" class="w-full h-full object-cover">
-                {% else %}
-                <img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&h=400&fit=crop&crop=center"
-                    alt="{{ venue.name }}" class="w-full h-full object-cover">
-                {% endif %}
+                {% set image_map = {
+                "TUM Main Hall": "tum-main-hall.jpg",
+                "ICT Boardroom": "ict-boardroom.jpeg",
+                "Engineering Seminar Room": "engineering-seminar-room.jpg",
+                "Library Auditorium": "library-auditorium.jpeg"
+                } %}
+                {% set image_file = image_map.get(venue.name, 'default-image.jpg') %}
+
+                <img src="{{ url_for('static', filename='assets/' + image_file) }}" alt="{{ venue.name }}"
+                    class="w-full h-full object-cover">
 
                 <!-- Gradient overlay -->
                 <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
 
-                <!-- Venue name overlay -->
+                <!-- Venue name and status overlay -->
                 <div class="absolute bottom-4 left-4 right-4">
                     <h3 class="text-xl font-bold text-white mb-2">{{ venue.name }}</h3>
                     {% if selected_date %}
+                    {% if is_booked %}
+                    <span
+                        class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        <svg class="-ml-0.5 mr-1.5 h-3 w-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        Booked
+                    </span>
+                    {% else %}
                     <span
                         class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                         <svg class="-ml-0.5 mr-1.5 h-3 w-3 text-green-600" fill="currentColor" viewBox="0 0 8 8">
@@ -81,6 +81,7 @@
                         </svg>
                         Available
                     </span>
+                    {% endif %}
                     {% endif %}
                 </div>
             </div>
@@ -111,14 +112,19 @@
 
             <div class="p-6 bg-slate-50 border-t border-slate-200 grid grid-cols-2 gap-3">
                 <button
-                    @click="modalVenue = { id: {{ venue.id }}, name: '{{ venue.name|replace("'", "\\'") }}', description: '{{ venue.description|replace("'", "\\'") }}', capacity: {{ venue.capacity }}, location: '{{ venue.location|replace("'", "\\'") }}', amenities: '{{ venue.amenities|replace("'", "\\'") if venue.amenities else "" }}' }; modalOpen = true"
+                    @click="modalVenue = { id: {{ venue.id }}, name: '{{ venue.name|escapejs }}', description: '{{ venue.description|escapejs }}', capacity: {{ venue.capacity }}, location: '{{ venue.location|escapejs }}', amenities: '{{ venue.amenities|escapejs if venue.amenities else '' }}' }; modalOpen = true"
                     class="w-full text-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50 transition">
                     View Details
                 </button>
+                {% if is_booked %}
+                <span
+                    class="w-full text-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-slate-500 bg-slate-200 cursor-not-allowed">Unavailable</span>
+                {% else %}
                 <a href="{{ url_for('main.book_venue') }}?venue={{ venue.id }}{% if selected_date %}&date={{ selected_date }}{% endif %}"
                     class="w-full text-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 transition">
                     Book Now
                 </a>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
@@ -131,19 +137,8 @@
             <path stroke-linecap="round" stroke-linejoin="round"
                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2zM15 15l-3-3m0 0l-3 3m3-3v6" />
         </svg>
-        <h3 class="mt-4 text-xl font-semibold text-slate-900">No Venues Available</h3>
-        {% if selected_date %}
-        <p class="mt-2 text-slate-600">We couldn't find any venues for <strong>{{ selected_date }}</strong>. Please try
-            another date.</p>
-        <a href="{{ url_for('main.view_venues') }}"
-            class="mt-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">Clear
-            Date Filter</a>
-        {% else %}
-        <p class="mt-2 text-slate-600">There are no venues listed at this time. Please check back later.</p>
-        <a href="{{ url_for('main.index') }}"
-            class="mt-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">Back
-            to Home</a>
-        {% endif %}
+        <h3 class="mt-4 text-xl font-semibold text-slate-900">No Venues Found</h3>
+        <p class="mt-2 text-slate-600">Please check back later or try a different date.</p>
     </div>
     {% endif %}
 
@@ -151,15 +146,19 @@
     <div x-show="modalOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-        class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" style="display: none;">
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        style="display: none;">
         <div @click.away="modalOpen = false" x-show="modalOpen" x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
             x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100"
             x-transition:leave-end="opacity-0 scale-95"
-            class="relative bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden">
-            <div class="absolute top-0 right-0 pt-4 pr-4">
+            class="relative bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+
+            <!-- Modal Header -->
+            <div class="flex-shrink-0 flex items-center justify-between p-6 border-b border-slate-200">
+                <h3 class="text-2xl font-bold text-slate-900" x-text="modalVenue.name"></h3>
                 <button @click="modalOpen = false" type="button"
-                    class="bg-white rounded-md text-slate-400 hover:text-slate-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    class="p-1 rounded-full text-slate-400 hover:text-slate-500 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all">
                     <span class="sr-only">Close</span>
                     <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" aria-hidden="true">
@@ -168,11 +167,14 @@
                     </svg>
                 </button>
             </div>
-            <div class="p-8">
-                <h3 class="text-2xl font-bold text-slate-900" x-text="modalVenue.name"></h3>
-                <p class="mt-2 text-slate-600" x-text="modalVenue.description"></p>
-                <div class="mt-6 border-t border-slate-200 pt-6">
-                    <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+
+            <!-- Modal Content -->
+            <div class="flex-grow p-6 overflow-y-auto">
+                <div class="prose prose-slate max-w-none mb-6">
+                    <p x-text="modalVenue.description"></p>
+                </div>
+                <div class="border-t border-slate-200 pt-6">
+                    <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
                         <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-slate-500">Capacity</dt>
                             <dd class="mt-1 text-lg font-semibold text-slate-900"
@@ -184,39 +186,28 @@
                         </div>
                         <div class="sm:col-span-2">
                             <dt class="text-sm font-medium text-slate-500">Amenities</dt>
-                            <dd class="mt-1 text-lg font-semibold text-slate-900" x-text="modalVenue.amenities"></dd>
+                            <dd class="mt-1 text-base text-slate-800" x-text="modalVenue.amenities"></dd>
                         </div>
                     </dl>
                 </div>
-                <div class="mt-8">
-                    <a :href="'{{ url_for('main.book_venue') }}?venue=' + modalVenue.id"
-                        class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">Book
-                        This Venue</a>
-                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="flex-shrink-0 p-6 bg-slate-50 border-t border-slate-200 rounded-b-2xl">
+                <a :href="'{{ url_for('main.book_venue') }}?venue=' + modalVenue.id"
+                    class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-transform hover:scale-105">Book
+                    This Venue</a>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Add custom CSS for text truncation -->
 <style>
     .line-clamp-3 {
         display: -webkit-box;
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
         overflow: hidden;
-        /* Standard fallback for better compatibility */
-        line-clamp: 3;
-    }
-
-    /* Fallback for browsers that don't support line-clamp */
-    @supports not (-webkit-line-clamp: 3) {
-        .line-clamp-3 {
-            max-height: 4.5em;
-            /* Approximate 3 lines */
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
     }
 </style>
 {% endblock %}
@@ -226,7 +217,6 @@
     document.addEventListener('DOMContentLoaded', function () {
         const dateInput = document.querySelector('input[name="date"]');
         if (dateInput) {
-            // Set minimum date to today
             const today = new Date().toISOString().split('T')[0];
             dateInput.setAttribute('min', today);
         }
