@@ -1,60 +1,132 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Venue Booking System{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='logo.png') }}" type="image/x-icon">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .hero-section { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 100px 0; }
-        .venue-card { transition: transform 0.3s; border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .venue-card:hover { transform: translateY(-5px); }
-        .booking-status { padding: 20px; border-radius: 10px; margin: 20px 0; }
-        .status-pending { background-color: #fff3cd; border: 1px solid #ffeaa7; }
-        .status-approved { background-color: #d4edda; border: 1px solid #00b894; }
-        .status-rejected { background-color: #f8d7da; border: 1px solid #e17055; }
-    </style>
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url_for('main.index') }}">
-                <i class="fas fa-building"></i> Venue Booking
-            </a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
-                <a class="nav-link" href="{{ url_for('main.view_venues') }}">Venues</a>
-                <a class="nav-link" href="{{ url_for('main.book_venue') }}">Book Now</a>
-            </div>
-        </div>
-    </nav>
+    <title>{% block title %}EventSpaces{% endblock %}</title>
 
-    <main>
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="container mt-3">
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show">
-                            {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    {% endfor %}
+    <!-- Tailwind CSS -->
+    <link rel="stylesheet" href="{{url_for('static',filename='dist/output.css')}}">
+    <link rel="preconnect" href="https://rsms.me/">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='assets/logo.png') }}" type="image/x-icon">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="bg-slate-50 text-slate-800 font-sans antialiased">
+    <!-- Header -->
+    <header class="bg-white/80 backdrop-blur-md shadow-sm fixed top-0 w-full z-50">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0">
+                    <a href="{{ url_for('main.index') }}"
+                        class="flex items-center space-x-2 text-xl font-bold text-slate-900 transition-colors hover:text-indigo-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                            class="w-6 h-6 text-indigo-600">
+                            <path fill-rule="evenodd"
+                                d="M4.5 2.25a.75.75 0 000 1.5v16.5a.75.75 0 000 1.5h15a.75.75 0 000-1.5V3.75a.75.75 0 000-1.5h-15zM9 6a.75.75 0 000 1.5h.75a.75.75 0 000-1.5H9zm-.75 3.75A.75.75 0 019 9h.75a.75.75 0 010 1.5H9a.75.75 0 01-.75-.75zM9 12a.75.75 0 000 1.5h.75a.75.75 0 000-1.5H9zm3-6a.75.75 0 000 1.5h.75a.75.75 0 000-1.5h-.75zm-.75 3.75a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM12 12a.75.75 0 000 1.5h.75a.75.75 0 000-1.5h-.75zm3-6a.75.75 0 000 1.5h.75a.75.75 0 000-1.5h-.75zm-.75 3.75a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM15 12a.75.75 0 000 1.5h.75a.75.75 0 000-1.5h-.75z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span>EventSpaces</span>
+                    </a>
                 </div>
-            {% endif %}
+                <!-- Desktop Nav -->
+                <div class="hidden md:flex items-center space-x-2">
+                    <a class="px-4 py-2 rounded-md text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition-all"
+                        href="{{ url_for('main.index') }}">Home</a>
+                    <a class="px-4 py-2 rounded-md text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition-all"
+                        href="{{ url_for('main.view_venues') }}">Venues</a>
+                    <a class="px-4 py-2 rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition-all"
+                        href="{{ url_for('main.book_venue') }}">Book Now</a>
+                </div>
+                <!-- Mobile Nav (can be implemented with a dropdown) -->
+                <div class="md:hidden">
+                    <a class="px-4 py-2 rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition-all"
+                        href="{{ url_for('main.book_venue') }}">Book</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="min-h-screen pt-16">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            {% for category, message in messages %}
+            {% set alert_class = 'bg-red-100 text-red-800' if category == 'danger' else 'bg-green-100 text-green-800' %}
+            {% set icon_svg = '<path fill-rule="evenodd"
+                d="M10 1.944A11.954 11.954 0 012.166 5.002L.868 6.301a.75.75 0 001.06 1.06l1.298-1.298A11.955 11.955 0 0110 1.944zM10 18.056l-1.298 1.298a.75.75 0 001.06 1.06l1.298-1.298A11.955 11.955 0 0110 18.056zM4.697 16.132a.75.75 0 001.06-1.06l-1.298-1.298a11.954 11.954 0 01-2.228-5.774.75.75 0 00-1.496-.068 13.455 13.455 0 002.518 6.505l1.444-1.444zM19.303 9.2a.75.75 0 00-1.06-1.06l-1.298 1.298a11.954 11.954 0 012.228 5.774.75.75 0 001.496.068 13.455 13.455 0 00-2.518-6.505l-1.444 1.444zM10 3.444A6.556 6.556 0 1016.556 10 6.556 6.556 0 0010 3.444z"
+                clip-rule="evenodd"></path>' if category == 'danger' else '<path fill-rule="evenodd"
+                d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.06-1.06L10.5 12.19l-1.72-1.72a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.06 0l4.5-4.5z"
+                clip-rule="evenodd"></path>' %}
+            <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
+                class="p-4 mb-4 rounded-lg shadow-md flex items-center {{ alert_class }}" role="alert">
+                <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">{{ icon_svg | safe }}</svg>
+                <span class="flex-grow">{{ message }}</span>
+                <button @click="show = false" type="button"
+                    class="ml-auto -mx-1.5 -my-1.5 rounded-lg p-1.5 hover:bg-white/20 inline-flex h-8 w-8"
+                    aria-label="Close">
+                    <span class="sr-only">Close</span>
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
         {% endwith %}
 
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="bg-dark text-white text-center py-4 mt-5">
-        <div class="container">
-            <p>&copy; 2025 Venue Booking System. All rights reserved.</p>
+    <footer class="bg-slate-800 text-slate-400">
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; EventSpaces. <br> All rights reserved.</p>
+            <p class="text-sm mt-1 text-slate-500">Making event planning simple.</p>
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Alpine.js for simple interactions -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Add loading states to form submissions
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function () {
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    if (submitBtn) {
+                        const originalContent = submitBtn.innerHTML;
+                        submitBtn.innerHTML = `
+                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Processing...
+                        `;
+                        submitBtn.disabled = true;
+
+                        setTimeout(() => {
+                            submitBtn.innerHTML = originalContent;
+                            submitBtn.disabled = false;
+                        }, 8000); // Increased timeout
+                    }
+                });
+            });
+        });
+    </script>
+
     {% block scripts %}{% endblock %}
 </body>
+
 </html>
