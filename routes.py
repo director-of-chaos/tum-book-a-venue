@@ -15,7 +15,7 @@ from flask import (
 )
 from datetime import datetime, date as date_type, time
 import uuid
-import csv
+import csv, json
 import io
 from models import db, Venue, BookingRequest, generate_reference_number
 from forms import BookingForm, AdminResponseForm
@@ -84,7 +84,6 @@ def book_venue():
     if request.method == "POST":
         form = BookingForm(request.form)
         if form.validate():
-            # <<< FIX: CONFLICT VALIDATION LOGIC >>>
             # Convert form times to time objects for comparison
             new_start_time = datetime.strptime(form.start_time.data, "%H:%M").time()
             new_end_time = datetime.strptime(form.end_time.data, "%H:%M").time()
@@ -119,15 +118,12 @@ def book_venue():
                     for b in conflicting_bookings:
                         booked_slots.append({"start": b.start_time, "end": b.end_time})
 
-                    import json
-
                     return render_template(
                         "book.html",
                         form=form,
                         preselected_venue=preselected_venue,
                         booked_slots_json=json.dumps(booked_slots),
                     )
-            # <<< END OF CONFLICT VALIDATION >>>
 
             # If no conflicts, proceed to create the booking
             booking_id = str(uuid.uuid4())
@@ -179,7 +175,6 @@ def book_venue():
     booked_slots = []
     if form.venue_id.data:
         preselected_venue = Venue.query.get(form.venue_id.data)
-        # <<< FIX: Fetch booked slots for the selected venue and date >>>
         if preselected_venue and form.event_date.data:
             bookings = BookingRequest.query.filter_by(
                 venue_id=form.venue_id.data,
@@ -188,8 +183,6 @@ def book_venue():
             ).all()
             for b in bookings:
                 booked_slots.append({"start": b.start_time, "end": b.end_time})
-
-    import json
 
     return render_template(
         "book.html",

@@ -44,7 +44,7 @@
             <form method="POST" id="bookingForm" class="space-y-8" novalidate>
                 {{ form.hidden_tag() }}
 
-                <!-- Step 1: Personal Information (Unchanged) -->
+                <!-- Step 1: Personal Information -->
                 <div x-show="step === 1" x-transition>
                     <h2 class="text-xl font-semibold text-slate-900 border-b border-slate-200 pb-3 mb-6">Step 1: Your
                         Information</h2>
@@ -77,7 +77,7 @@
                         Details</h2>
                     <div class="grid grid-cols-1 gap-y-6 sm:grid-cols-6 sm:gap-x-6">
 
-                        <!-- Venue (Unchanged) -->
+                        <!-- Venue -->
                         <div class="sm:col-span-6">
                             <label for="{{ form.venue_id.id }}" class="block text-sm font-medium text-slate-700">Venue
                                 <span class="text-red-500">*</span></label>
@@ -93,7 +93,7 @@
                             {% endif %}
                         </div>
 
-                        <!-- Event Title (Unchanged) -->
+                        <!-- Event Title -->
                         <div class="sm:col-span-6">
                             <label for="{{ form.event_title.id }}"
                                 class="block text-sm font-medium text-slate-700">Event Title <span
@@ -103,7 +103,7 @@
                             Annual Company Gala") }}
                         </div>
 
-                        <!-- Event Date (Unchanged) -->
+                        <!-- Event Date -->
                         <div class="sm:col-span-2">
                             <label for="{{ form.event_date.id }}" class="block text-sm font-medium text-slate-700">Event
                                 Date <span class="text-red-500">*</span></label>
@@ -112,7 +112,6 @@
                             }}
                         </div>
 
-                        <!-- <<< FIX: DYNAMIC START TIME >>> -->
                         <div class="sm:col-span-2">
                             <label for="{{ form.start_time.id }}" class="block text-sm font-medium text-slate-700">Start
                                 Time <span class="text-red-500">*</span></label>
@@ -125,7 +124,6 @@
                             </select>
                         </div>
 
-                        <!-- <<< FIX: DYNAMIC END TIME >>> -->
                         <div class="sm:col-span-2">
                             <label for="{{ form.end_time.id }}" class="block text-sm font-medium text-slate-700">End
                                 Time <span class="text-red-500">*</span></label>
@@ -138,7 +136,7 @@
                             </select>
                         </div>
 
-                        <!-- Description & Navigation (Unchanged) -->
+                        <!-- Description & Navigation -->
                         <div class="sm:col-span-6">
                             <label for="{{ form.event_description.id }}"
                                 class="block text-sm font-medium text-slate-700">Additional Information</label>
